@@ -186,6 +186,6 @@ dotnet_style_allow_statement_immediately_after_block_experimental = true:silent
 dotnet_style_predefined_type_for_locals_parameters_members = true:silent
 dotnet_style_predefined_type_for_member_access = true:silent
 dotnet_diagnostic.CA1836.severity = warning
-dotnet_diagnostic.CA1852.severity = warning
+dotnet_diagnostic.CA1852.severity = suggestion
 
 
