@@ -53,7 +53,8 @@ namespace UnityExplorer.Config
             InternalHandler.LoadConfig();
 
 #if STANDALONE
-            Loader.Standalone.ExplorerEditorBehaviour.Instance?.LoadConfigs();
+            if (Loader.Standalone.ExplorerEditorBehaviour.Instance)
+                Loader.Standalone.ExplorerEditorBehaviour.Instance.LoadConfigs();
 #endif
         }
 
