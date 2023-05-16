@@ -28,7 +28,7 @@ namespace UnityExplorer.UI.Widgets
             {
                 Texture2D or Cubemap => Pool<Texture2DWidget>.Borrow(),
                 Sprite s when s.texture => Pool<Texture2DWidget>.Borrow(),
-                Image i when i.sprite?.texture => Pool<Texture2DWidget>.Borrow(),
+                Image i when i.sprite && i.sprite.texture => Pool<Texture2DWidget>.Borrow(),
 
                 Material when MaterialWidget.MaterialWidgetSupported => Pool<MaterialWidget>.Borrow(),
 

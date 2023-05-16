@@ -49,7 +49,7 @@ namespace UnityExplorer.UI.Widgets
                 {
                     if (material.GetTexture(property) is Texture texture)
                     {
-                        if (texture.TryCast<Texture2D>() is null && texture.TryCast<Cubemap>() is null)
+                        if (texture.TryCast<Texture2D>() == null && texture.TryCast<Cubemap>() == null)
                             continue;
 
                         textures.Add(property, texture);

@@ -117,9 +117,9 @@ namespace UnityExplorer.Tests
                                              Type type,
                                              GameObject go)
         {
-            ExplorerCore.Log($"_string: {_string}, integer: {integer}, color: {color.ToString()}, flags: {flags}, " +
-                $"vector: {vector.ToString()}, quaternion: {quaternion.ToString()}, obj: {obj?.ToString() ?? "null"}," +
-                $"type: {type?.FullName ?? "null"}, go: {go?.ToString() ?? "null"}");
+            ExplorerCore.Log($"_string: {_string}, integer: {integer}, color: {color}, flags: {flags}, " +
+                $"vector: {vector}, quaternion: {quaternion}, obj: {obj?.ToString() ?? "null"}," +
+                $"type: {type?.FullName ?? "null"}, go: {go}");
         }
 
         private static void Init_Mono()

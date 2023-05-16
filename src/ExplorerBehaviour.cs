@@ -47,8 +47,8 @@ namespace UnityExplorer
         {
             if (quitting) return;
             quitting = true;
-
-            TryDestroy(UIManager.UIRoot?.transform.root.gameObject);
+            if (UIManager.UIRoot)
+                TryDestroy(UIManager.UIRoot.transform.root.gameObject);
 
             TryDestroy((typeof(Universe).Assembly.GetType("UniverseLib.UniversalBehaviour")
                 .GetProperty("Instance", BindingFlags.Static | BindingFlags.NonPublic)
