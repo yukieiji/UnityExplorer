@@ -82,8 +82,8 @@ namespace UnityExplorer.ObjectExplorer
                     go = obj.TryCast<GameObject>();
                 else if (
                     typeof(Component).IsAssignableFrom(type) &&
-                    obj.TryCast<Component>())
-                    go = obj.Cast<Component>().gameObject;
+                    obj is Component comp)
+                    go = comp.gameObject;
 
                 if (go)
                 {
