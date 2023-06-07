@@ -14,10 +14,20 @@
     <Configurations>BIE_Cpp;BIE_Cpp_CoreCLR;BIE_Unity_Cpp_CoreCLR;BIE5_Mono;BIE6_Mono;ML_Cpp_net6;ML_Cpp_net472;ML_Mono;STANDALONE_Mono;STANDALONE_Cpp</Configurations>
   </PropertyGroup>
 
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <ItemGroup Condition="'$(Configuration)'=='BIE_Cpp_CoreCLR' or '$(Configuration)'=='BIE_Unity_Cpp_CoreCLR'">
+      <Exec Command="dotnet build ..\UniverseLib\src\UniverseLib.sln -c Release_IL2CPP" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(Configuration)'=='BIE6_Mono' or '$(Configuration)'=='BIE5_Mono' or '$(Configuration)'=='ML_Mono' or '$(Configuration)'=='STANDALONE_Mono'">
+      <Exec Command="dotnet build ..\UniverseLib\src\UniverseLib.sln -c Release_Mono" />
+    </ItemGroup>
+  </Target>
+
   <ItemGroup>
     <EditorConfigFiles Remove=".editorconfig" />
   </ItemGroup>
-  
+
   <!-- ~~~~~ CONFIGURATIONS ~~~~~ -->
   <!-- ML IL2CPP net6 -->
   <PropertyGroup Condition="'$(Configuration)'=='ML_Cpp_net6'">
@@ -107,11 +117,17 @@
   <ItemGroup Condition="'$(Configuration)'=='BIE_Cpp_CoreCLR' or '$(Configuration)'=='BIE_Unity_Cpp_CoreCLR'">
     <PackageReference Include="Il2CppInterop.Common" Version="1.0.0" />
     <PackageReference Include="Il2CppInterop.Runtime" Version="1.0.0" />
-    <PackageReference Include="UniverseLib.IL2CPP.Interop" Version="1.5.1" />
+    <Reference Include="UniverseLib">
+      <HintPath>..\UniverseLib\Release\UniverseLib.Il2Cpp\UniverseLib.IL2CPP.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <!-- mono nuget -->
   <ItemGroup Condition="'$(Configuration)'=='BIE6_Mono' or '$(Configuration)'=='BIE5_Mono' or '$(Configuration)'=='ML_Mono' or '$(Configuration)'=='STANDALONE_Mono'">
-    <PackageReference Include="UniverseLib.Mono" Version="1.5.1" />
+    <Reference Include="UniverseLib">
+      <HintPath>..\UniverseLib\Release\UniverseLib.Mono\UniverseLib.Mono.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
 
   <!-- ~~~~~ ASSEMBLY REFERENCES ~~~~~ -->
