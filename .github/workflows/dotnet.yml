@@ -1,6 +1,6 @@
 name: Build UnityExplorer
 
-# Controls when the action will run. 
+# Controls when the action will run.
 on:
   push:
     branches: [master]
@@ -15,27 +15,30 @@ jobs:
     steps:
       # Setup
 
-      - name: Checkout latest      
-        uses: actions/checkout@v2
-        
+      - name: Checkout latest
+        uses: actions/checkout@v3
+        with:
+          submodules: true
       - name: Setup dotnet
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: '6.0.x'
           include-prerelease: true
-        
+      # Run UniverseLib build script
+      - run: |
+         ./UniverseLib/build.ps1
       # Run build script
       - run: |
-         ./build.ps1        
-          
+         ./build.ps1
+
       #  Upload artifacts
-      
+
       # BepInEx IL2CPP
       - uses: actions/upload-artifact@v2
         with:
           name: UnityExplorer.BepInEx.IL2CPP.zip
           path: ./Release/UnityExplorer.BepInEx.IL2CPP/
-      
+
       # BepInEx IL2CPP CoreCLR
       - uses: actions/upload-artifact@v2
         with:
@@ -51,46 +54,46 @@ jobs:
         with:
           name: UnityExplorer.BepInEx5.Mono.zip
           path: ./Release/UnityExplorer.BepInEx5.Mono/
-      
+
       # BepInEx 6 Mono
       - uses: actions/upload-artifact@v2
         with:
           name: UnityExplorer.BepInEx6.Mono.zip
           path: ./Release/UnityExplorer.BepInEx6.Mono/
-      
+
       # Editor
       - uses: actions/upload-artifact@v2
         with:
           name: UnityExplorer.Editor.zip
           path: ./UnityEditorPackage/
-      
+
       # MelonLoader IL2CPP net6preview
       - uses: actions/upload-artifact@v2
         with:
           name: UnityExplorer.MelonLoader.IL2CPP.net6preview.zip
           path: ./Release/UnityExplorer.MelonLoader.IL2CPP.net6preview/
-      
+
       # MelonLoader IL2CPP net472
       - uses: actions/upload-artifact@v2
         with:
           name: UnityExplorer.MelonLoader.IL2CPP.zip
           path: ./Release/UnityExplorer.MelonLoader.IL2CPP/
-      
+
       # MelonLoader Mono
       - uses: actions/upload-artifact@v2
         with:
           name: UnityExplorer.MelonLoader.Mono.zip
           path: ./Release/UnityExplorer.MelonLoader.Mono/
-      
+
       # Standalone Il2Cpp
       - uses: actions/upload-artifact@v2
         with:
           name: UnityExplorer.Standalone.IL2CPP.zip
           path: ./Release/UnityExplorer.Standalone.IL2CPP/
-      
+
       # Standalone Mono
       - uses: actions/upload-artifact@v2
         with:
           name: UnityExplorer.Standalone.Mono.zip
           path: ./Release/UnityExplorer.Standalone.Mono/
-      
+
