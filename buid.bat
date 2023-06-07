@@ -1,3 +1,0 @@
-call dotnet build src/UnityExplorer.sln -c Release_BIE_Unity_Cpp
-call lib\ILRepack.exe /target:library /lib:lib/net472/build647+ /lib:lib/net6/ /lib:lib/interop/ /lib:Release/UnityExplorer.BepInEx.Unity.IL2CPP.CoreCLR/ /internalize /out:Release/UnityExplorer.BepInEx.Unity.IL2CPP.CoreCLR/UnityExplorer.BIE.Unity.IL2CPP.CoreCLR.dll Release/UnityExplorer.BepInEx.Unity.IL2CPP.CoreCLR/UnityExplorer.BIE.Unity.IL2CPP.CoreCLR.dll Release/UnityExplorer.BepInEx.Unity.IL2CPP.CoreCLR/mcs.dll Release/UnityExplorer.BepInEx.Unity.IL2CPP.CoreCLR/Tomlet.dll
-pause
