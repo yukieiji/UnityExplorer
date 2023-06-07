@@ -16,8 +16,11 @@
 
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <ItemGroup Condition="'$(Configuration)'=='ML_Cpp_net6' or '$(Configuration)'=='ML_Cpp_net472' or '$(Configuration)'=='STANDALONE_Cpp' or '$(Configuration)'=='BIE_Cpp'">
+      <Exec Command="dotnet build ..\UniverseLib\src\UniverseLib.sln -c Release_IL2CPP_Unhollower" />
+    </ItemGroup>
     <ItemGroup Condition="'$(Configuration)'=='BIE_Cpp_CoreCLR' or '$(Configuration)'=='BIE_Unity_Cpp_CoreCLR'">
-      <Exec Command="dotnet build ..\UniverseLib\src\UniverseLib.sln -c Release_IL2CPP" />
+      <Exec Command="dotnet build ..\UniverseLib\src\UniverseLib.sln -c Release_IL2CPP_Interop" />
     </ItemGroup>
     <ItemGroup Condition="'$(Configuration)'=='BIE6_Mono' or '$(Configuration)'=='BIE5_Mono' or '$(Configuration)'=='ML_Mono' or '$(Configuration)'=='STANDALONE_Mono'">
       <Exec Command="dotnet build ..\UniverseLib\src\UniverseLib.sln -c Release_Mono" />
@@ -112,13 +115,16 @@
   <!-- il2cpp nuget -->
   <ItemGroup Condition="'$(Configuration)'=='ML_Cpp_net6' or '$(Configuration)'=='ML_Cpp_net472' or '$(Configuration)'=='STANDALONE_Cpp' or '$(Configuration)'=='BIE_Cpp'">
     <PackageReference Include="Il2CppAssemblyUnhollower.BaseLib" Version="0.4.22" />
-    <PackageReference Include="UniverseLib.IL2CPP.Unhollower" Version="1.5.1" />
+    <Reference Include="UniverseLib">
+      <HintPath>..\UniverseLib\Release\UniverseLib.Il2Cpp.Unhollower\UniverseLib.IL2CPP.Unhollower.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'=='BIE_Cpp_CoreCLR' or '$(Configuration)'=='BIE_Unity_Cpp_CoreCLR'">
     <PackageReference Include="Il2CppInterop.Common" Version="1.0.0" />
     <PackageReference Include="Il2CppInterop.Runtime" Version="1.0.0" />
     <Reference Include="UniverseLib">
-      <HintPath>..\UniverseLib\Release\UniverseLib.Il2Cpp\UniverseLib.IL2CPP.dll</HintPath>
+      <HintPath>..\UniverseLib\Release\UniverseLib.Il2Cpp.Interop\UniverseLib.IL2CPP.Interop.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
