@@ -22,7 +22,8 @@ body:
       description: Please select your environment for UnityExplorer.
       options:
         - BepInEx IL2CPP
-        - BepInEx Unity IL2CPP
+        - BepInEx IL2CPP CoreCLR
+        - BepInEx Unity IL2CPP CoreCLR
         - BepInEx 6.X Mono
         - BepInEx 5.X Mono
         - MelonLoader IL2CPP
