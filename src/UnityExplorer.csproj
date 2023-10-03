@@ -58,12 +58,12 @@
     <DefineConstants>CPP,ML,UNHOLLOWER</DefineConstants>
     <AssemblyName>UnityExplorer.ML.IL2CPP</AssemblyName>
   </PropertyGroup>
-  <!-- ML IL2CPP Interop net6 -->
+  <!-- ML IL2CPP CoreCLR -->
   <PropertyGroup Condition="'$(Configuration)'=='ML_Cpp_net6_interop'">
     <TargetFramework>net6</TargetFramework>
-    <OutputPath>..\Release\UnityExplorer.MelonLoader.IL2CPP.net6preview.interop\</OutputPath>
+    <OutputPath>..\Release\UnityExplorer.MelonLoader.IL2CPP.CoreCLR\</OutputPath>
     <DefineConstants>CPP,ML,INTEROP</DefineConstants>
-    <AssemblyName>UnityExplorer.ML.IL2CPP.net6preview.interop</AssemblyName>
+    <AssemblyName>UnityExplorer.ML.IL2CPP.CoreCLR</AssemblyName>
   </PropertyGroup>
   <!-- ML MONO -->
   <PropertyGroup Condition="'$(Configuration)'=='ML_Mono'">
