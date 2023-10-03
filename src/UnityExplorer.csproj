@@ -149,7 +149,7 @@
   <!-- BIE il2cpp Interop -->
   <ItemGroup Condition="'$(Configuration)'=='BIE_Cpp_CoreCLR' or '$(Configuration)'=='BIE_Unity_Cpp_CoreCLR'">
     <Reference Include="UniverseLib">
-      <HintPath>..\UniverseLib\Release\UniverseLib.Il2Cpp.Interop\UniverseLib.BIE.IL2CPP.Interop.BIE.dll</HintPath>
+      <HintPath>..\UniverseLib\Release\UniverseLib.Il2Cpp.Interop\UniverseLib.BIE.IL2CPP.Interop.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
