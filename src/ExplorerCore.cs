@@ -19,7 +19,7 @@ namespace UnityExplorer
     public static class ExplorerCore
     {
         public const string NAME = "UnityExplorer";
-        public const string VERSION = "4.9.3";
+        public const string VERSION = "4.10.0";
         public const string AUTHOR = "Sinai, yukieiji";
         public const string GUID = "com.sinai.unityexplorer";
 
