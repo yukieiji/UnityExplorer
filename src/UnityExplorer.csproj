@@ -11,19 +11,7 @@
     <DebugType>none</DebugType>
     <RootNamespace>UnityExplorer</RootNamespace>
     <LangVersion>10.0</LangVersion>
-    <Configurations>
-      BIE_Cpp;
-      BIE_Cpp_CoreCLR;
-      BIE_Unity_Cpp_CoreCLR;
-      BIE5_Mono;
-      BIE6_Mono;
-      ML_Cpp_net6;
-      ML_Cpp_CoreCLR;
-      ML_Cpp_net472;
-      ML_Mono;
-      STANDALONE_Mono;
-      STANDALONE_Cpp
-    </Configurations>
+    <Configurations>BIE_Cpp;BIE_Cpp_CoreCLR;BIE_Unity_Cpp_CoreCLR;BIE5_Mono;BIE6_Mono;BIE6_Unity_Mono;ML_Cpp_net6;ML_Cpp_CoreCLR;ML_Cpp_net472;ML_Mono;STANDALONE_Mono;STANDALONE_Cpp</Configurations>
   </PropertyGroup>
 
 
@@ -37,7 +25,7 @@
     <ItemGroup Condition="'$(Configuration)'=='ML_Cpp_CoreCLR'">
       <Exec Command="dotnet build ..\UniverseLib\src\UniverseLib.sln -c Release_IL2CPP_Interop_ML" />
     </ItemGroup>
-    <ItemGroup Condition="'$(Configuration)'=='BIE6_Mono' or '$(Configuration)'=='BIE5_Mono' or '$(Configuration)'=='ML_Mono' or '$(Configuration)'=='STANDALONE_Mono'">
+    <ItemGroup Condition="'$(Configuration)'=='BIE6_Mono' or '$(Configuration)'=='BIE6_Unity_Mono' or '$(Configuration)'=='BIE5_Mono' or '$(Configuration)'=='ML_Mono' or '$(Configuration)'=='STANDALONE_Mono'">
       <Exec Command="dotnet build ..\UniverseLib\src\UniverseLib.sln -c Release_Mono" />
     </ItemGroup>
   </Target>
@@ -103,6 +91,13 @@
     <DefineConstants>MONO,BIE,BIE6</DefineConstants>
     <AssemblyName>UnityExplorer.BIE6.Mono</AssemblyName>
   </PropertyGroup>
+  <!-- BEPINEX 6 Unity MONO -->
+  <PropertyGroup Condition="'$(Configuration)'=='BIE6_Unity_Mono'">
+    <TargetFramework>net35</TargetFramework>
+    <OutputPath>..\Release\UnityExplorer.BepInEx6.Unity.Mono\</OutputPath>
+    <DefineConstants>MONO,BIE,BIPUNITY,BIE6</DefineConstants>
+    <AssemblyName>UnityExplorer.BIE6.Unity.Mono</AssemblyName>
+  </PropertyGroup>
   <!-- BEPINEX 5 MONO -->
   <PropertyGroup Condition="'$(Configuration)'=='BIE5_Mono'">
     <TargetFramework>net35</TargetFramework>
@@ -167,7 +162,7 @@
   </ItemGroup>
 
   <!-- mono nuget -->
-  <ItemGroup Condition="'$(Configuration)'=='BIE6_Mono' or '$(Configuration)'=='BIE5_Mono' or '$(Configuration)'=='ML_Mono' or '$(Configuration)'=='STANDALONE_Mono'">
+  <ItemGroup Condition="'$(Configuration)'=='BIE6_Mono' or '$(Configuration)'=='BIE6_Unity_Mono' or '$(Configuration)'=='BIE5_Mono' or '$(Configuration)'=='ML_Mono' or '$(Configuration)'=='STANDALONE_Mono'">
     <Reference Include="UniverseLib">
       <HintPath>..\UniverseLib\Release\UniverseLib.Mono\UniverseLib.Mono.dll</HintPath>
       <Private>True</Private>
@@ -213,11 +208,21 @@
   <!-- BepInEx 6 Mono -->
   <ItemGroup Condition="'$(Configuration)'=='BIE6_Mono'">
     <Reference Include="BepInEx">
-      <HintPath>..\lib\net35\BepInEx.Core.dll</HintPath>
+      <HintPath>..\lib\net35\build423~577\BepInEx.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="BepInEx.Unity">
-      <HintPath>..\lib\net35\BepInEx.Unity.dll</HintPath>
+      <HintPath>..\lib\net35\build423~577\BepInEx.Unity.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)'=='BIE6_Unity_Mono'">
+    <Reference Include="BepInEx">
+      <HintPath>..\lib\net35\build647+\BepInEx.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="BepInEx.Unity">
+      <HintPath>..\lib\net35\build647+\BepInEx.Unity.Mono.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
@@ -243,7 +248,7 @@
     </Reference>
   </ItemGroup>
   <!-- Mono -->
-  <ItemGroup Condition="'$(Configuration)'=='BIE6_Mono' or '$(Configuration)'=='BIE5_Mono' or '$(Configuration)'=='ML_Mono' or '$(Configuration)'=='STANDALONE_Mono'">
+  <ItemGroup Condition="'$(Configuration)'=='BIE6_Mono' or '$(Configuration)'=='BIE6_Unity_Mono' or '$(Configuration)'=='BIE5_Mono' or '$(Configuration)'=='ML_Mono' or '$(Configuration)'=='STANDALONE_Mono'">
     <Reference Include="UnityEngine">
       <HintPath>..\lib\net35\UnityEngine.dll</HintPath>
       <Private>False</Private>

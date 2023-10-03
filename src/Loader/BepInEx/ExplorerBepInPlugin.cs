@@ -11,6 +11,11 @@ using BepInEx.Unity.IL2CPP;
 using BepInEx.IL2CPP;
 #endif
 #endif
+#if MONO
+#if BIPUNITY
+using BepInEx.Unity.Mono;
+#endif
+#endif
 
 namespace UnityExplorer
 {
