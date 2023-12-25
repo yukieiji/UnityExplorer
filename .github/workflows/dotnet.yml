@@ -24,11 +24,12 @@ jobs:
         with:
           dotnet-version: '6.x'
       # Run UniverseLib build script
-      - name: Build
+      - name: Build UniverseLib
         run: ./build.ps1
         working-directory: ./UniverseLib
       # Run build script
-      - run: ./build.ps1
+      - name: Build UE
+        run: ./build.ps1
 
       #  Upload artifacts
       - name: Upload BepInEx.IL2CPP
