@@ -27,9 +27,9 @@ Nightly builds can be found [here](https://github.com/yukieiji/UnityExplorer/act
 
 | Release | IL2CPP | Mono |
 | ------- | ------ | ---- |
-| BIE 6.X | ✅ [link](https://github.com/yukieiji/UnityExplorer/releases/latest/download/UnityExplorer.BepInEx.IL2CPP.zip) | ✅ [link](https://github.com/yukieiji/UnityExplorer/releases/latest/download/UnityExplorer.BepInEx6.Mono.zip) |
-| BIE 6.X (CoreCLR, be.472 to be.577) | ✅ [link](https://github.com/yukieiji/UnityExplorer/releases/latest/download/UnityExplorer.BepInEx.IL2CPP.CoreCLR.zip) | ✖ |
 | BIE 6.X (CoreCLR, be.647+) | ✅ [link](https://github.com/yukieiji/UnityExplorer/releases/latest/download/UnityExplorer.BepInEx.Unity.IL2CPP.CoreCLR.zip) | ✖ |
+| BIE 6.X (CoreCLR, be.472 to be.577) | ✅ [link](https://github.com/yukieiji/UnityExplorer/releases/latest/download/UnityExplorer.BepInEx.IL2CPP.CoreCLR.zip) | ✖ |
+| BIE 6.X | ✅ [link](https://github.com/yukieiji/UnityExplorer/releases/latest/download/UnityExplorer.BepInEx.IL2CPP.zip) | ✅ [link](https://github.com/yukieiji/UnityExplorer/releases/latest/download/UnityExplorer.BepInEx6.Mono.zip) |
 | BIE 5.X | ✖️ n/a | ✅ [link](https://github.com/yukieiji/UnityExplorer/releases/latest/download/UnityExplorer.BepInEx5.Mono.zip) |
 
 1. Unzip the release file into a folder
@@ -41,8 +41,9 @@ Nightly builds can be found [here](https://github.com/yukieiji/UnityExplorer/act
 
 | Release | IL2CPP | Mono |
 | ------- | ------ | ---- |
+| ML 0.6  | ✅ [link](https://github.com/yukieiji/UnityExplorer/releases/latest/download/UnityExplorer.MelonLoader.IL2CPP.CoreCLR.zip) | ✖️ |
+| ML 0.6(only preview build)  | ✅ [link](https://github.com/yukieiji/UnityExplorer/releases/latest/download/UnityExplorer.MelonLoader.IL2CPP.net6preview.zip) | ✖️ |
 | ML 0.5  | ✅ [link](https://github.com/yukieiji/UnityExplorer/releases/latest/download/UnityExplorer.MelonLoader.IL2CPP.zip) | ✅ [link](https://github.com/yukieiji/UnityExplorer/releases/latest/download/UnityExplorer.MelonLoader.Mono.zip) | 
-| ML 0.6  | ✅ [link](https://github.com/yukieiji/UnityExplorer/releases/latest/download/UnityExplorer.MelonLoader.IL2CPP.net6preview.zip) | ✖️ |
 
 1. Unzip the release file into a folder
 2. Copy the DLL inside the `Mods` folder into your MelonLoader `Mods` folder
