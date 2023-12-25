@@ -11,6 +11,8 @@
     <DebugType>none</DebugType>
     <RootNamespace>UnityExplorer</RootNamespace>
     <LangVersion>10.0</LangVersion>
+    <!-- MSBuildの.NET8対応に伴って勝手にバージョンにハッシュ値入れられてBepInExのロード不具合が出たため、明示的に無効化しておく -->
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <Configurations>BIE_Cpp;BIE_Cpp_CoreCLR;BIE_Unity_Cpp_CoreCLR;BIE5_Mono;BIE6_Mono;BIE6_Unity_Mono;ML_Cpp_net6;ML_Cpp_CoreCLR;ML_Cpp_net472;ML_Mono;STANDALONE_Mono;STANDALONE_Cpp</Configurations>
   </PropertyGroup>
 
