@@ -25,6 +25,7 @@ body:
         - BepInEx IL2CPP CoreCLR
         - BepInEx Unity IL2CPP CoreCLR
         - BepInEx 6.X Mono
+        - BepInEx 6.X Unity Mono
         - BepInEx 5.X Mono
         - MelonLoader IL2CPP
         - MelonLoader IL2CPP net6preview
