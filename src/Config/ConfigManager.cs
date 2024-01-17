@@ -27,6 +27,7 @@ namespace UnityExplorer.Config
         public static ConfigElement<KeyCode> UI_MouseInspect_Keybind;
         public static ConfigElement<string> CSConsole_Assembly_Blacklist;
         public static ConfigElement<string> Reflection_Signature_Blacklist;
+        public static ConfigElement<bool> Save_Logs;
 
         // internal configs
         internal static InternalConfigHandler InternalHandler { get; private set; }
@@ -140,6 +141,10 @@ namespace UnityExplorer.Config
                 "Seperate signatures with a semicolon ';'.\r\n" +
                 "For example, to blacklist Camera.main, you would add 'UnityEngine.Camera.main;'",
                 "");
+
+            Save_Logs = new("Save Logs To Disk",
+                "Should the log files be saved to disk?",
+                false);
         }
     }
 }
