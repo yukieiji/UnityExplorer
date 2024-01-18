@@ -73,7 +73,8 @@ namespace UnityExplorer.UI.Panels
                     File.Delete(files[i]);
             }
 
-            File.WriteAllLines(CurrentStreamPath, Logs.Select(it => it.message).ToArray());
+            if (ConfigManager.Log_To_Disk.Value)
+                File.WriteAllLines(CurrentStreamPath, Logs.Select(it => it.message).ToArray());
         }
 
         // Logging
@@ -82,7 +83,7 @@ namespace UnityExplorer.UI.Panels
         {
             Logs.Add(new LogInfo(message, type));
 
-            if (CurrentStreamPath != null)
+            if (CurrentStreamPath != null && ConfigManager.Log_To_Disk.Value)
                 File.AppendAllText(CurrentStreamPath, '\n' + message);
 
             if (logScrollPool != null)
