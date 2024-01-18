@@ -124,7 +124,7 @@ namespace UnityExplorer.Config
 
             Log_To_Disk = new("Log To Disk",
                 "Should UnityExplorer save log files to the disk?",
-                false);
+                true);
 
             World_MouseInspect_Keybind = new("World Mouse-Inspect Keybind",
                 "Optional keybind to being a World-mode Mouse Inspect.",
