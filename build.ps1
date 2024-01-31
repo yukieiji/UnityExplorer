@@ -1,3 +1,8 @@
+cd UniverseLib
+.\build.ps1
+cd ..
+
+
 # ----------- MelonLoader IL2CPP (net6) -----------
 dotnet build src/UnityExplorer.sln -c Release_ML_Cpp_net6preview
 $Path = "Release\UnityExplorer.MelonLoader.IL2CPP.net6preview"

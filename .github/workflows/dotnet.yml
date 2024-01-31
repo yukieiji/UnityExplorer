@@ -23,10 +23,6 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '6.x'
-      # Run UniverseLib build script
-      - name: Build UniverseLib
-        run: ./build.ps1
-        working-directory: ./UniverseLib
       # Run build script
       - name: Build UE
         run: ./build.ps1
