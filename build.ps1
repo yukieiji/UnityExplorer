@@ -10,6 +10,7 @@ $Path = "Release\UnityExplorer.MelonLoader.IL2CPP.net6preview"
 lib/ILRepack.exe /target:library /lib:lib/net6 /lib:lib/unhollowed /lib:$Path /internalize /out:$Path/UnityExplorer.ML.IL2CPP.net6preview.dll $Path/UnityExplorer.ML.IL2CPP.net6preview.dll $Path/mcs.dll
 # (cleanup and move files)
 Remove-Item $Path/UnityExplorer.ML.IL2CPP.net6preview.deps.json
+Remove-Item $Path/UnityExplorer.ML.IL2CPP.net6preview.pdb
 Remove-Item $Path/Tomlet.dll
 Remove-Item $Path/mcs.dll
 Remove-Item $Path/Iced.dll
@@ -29,6 +30,7 @@ $Path = "Release\UnityExplorer.MelonLoader.IL2CPP.CoreCLR"
 lib/ILRepack.exe /target:library /lib:lib/net6 /lib:lib/interop /lib:$Path /internalize /out:$Path/UnityExplorer.ML.IL2CPP.CoreCLR.dll $Path/UnityExplorer.ML.IL2CPP.CoreCLR.dll $Path/mcs.dll
 # (cleanup and move files)
 Remove-Item $Path/UnityExplorer.ML.IL2CPP.CoreCLR.deps.json
+Remove-Item $Path/UnityExplorer.ML.IL2CPP.CoreCLR.pdb
 Remove-Item $Path/Tomlet.dll
 Remove-Item $Path/mcs.dll
 Remove-Item $Path/Iced.dll
@@ -53,6 +55,7 @@ Remove-Item $Path/Tomlet.dll
 Remove-Item $Path/mcs.dll
 Remove-Item $Path/Iced.dll
 Remove-Item $Path/UnhollowerBaseLib.dll
+Remove-Item $Path/UnityExplorer.ML.IL2CPP.pdb
 New-Item -Path "$Path" -Name "Mods" -ItemType "directory" -Force
 Move-Item -Path $Path/UnityExplorer.ML.IL2CPP.dll -Destination $Path/Mods -Force
 New-Item -Path "$Path" -Name "UserLibs" -ItemType "directory" -Force
@@ -69,6 +72,7 @@ lib/ILRepack.exe /target:library /lib:lib/net35 /lib:$Path /internalize /out:$Pa
 # (cleanup and move files)
 Remove-Item $Path/Tomlet.dll
 Remove-Item $Path/mcs.dll
+Remove-Item $Path/UnityExplorer.ML.Mono.pdb
 New-Item -Path "$Path" -Name "Mods" -ItemType "directory" -Force
 Move-Item -Path $Path/UnityExplorer.ML.Mono.dll -Destination $Path/Mods -Force
 New-Item -Path "$Path" -Name "UserLibs" -ItemType "directory" -Force
@@ -87,6 +91,7 @@ Remove-Item $Path/Tomlet.dll
 Remove-Item $Path/mcs.dll
 Remove-Item $Path/Iced.dll
 Remove-Item $Path/UnhollowerBaseLib.dll
+Remove-Item $Path/UnityExplorer.BIE.IL2CPP.pdb
 New-Item -Path "$Path" -Name "plugins" -ItemType "directory" -Force
 New-Item -Path "$Path" -Name "plugins/sinai-dev-UnityExplorer" -ItemType "directory" -Force
 Move-Item -Path $Path/UnityExplorer.BIE.IL2CPP.dll -Destination $Path/plugins/sinai-dev-UnityExplorer -Force
@@ -108,6 +113,7 @@ Remove-Item $Path/Il2CppInterop.Common.dll
 Remove-Item $Path/Il2CppInterop.Runtime.dll
 Remove-Item $Path/Microsoft.Extensions.Logging.Abstractions.dll
 Remove-Item $Path/UnityExplorer.BIE.IL2CPP.CoreCLR.deps.json
+Remove-Item $Path/UnityExplorer.BIE.IL2CPP.CoreCLR.pdb
 New-Item -Path "$Path" -Name "plugins" -ItemType "directory" -Force
 New-Item -Path "$Path" -Name "plugins/sinai-dev-UnityExplorer" -ItemType "directory" -Force
 Move-Item -Path $Path/UnityExplorer.BIE.IL2CPP.CoreCLR.dll -Destination $Path/plugins/sinai-dev-UnityExplorer -Force
@@ -129,6 +135,7 @@ Remove-Item $Path/Il2CppInterop.Common.dll
 Remove-Item $Path/Il2CppInterop.Runtime.dll
 Remove-Item $Path/Microsoft.Extensions.Logging.Abstractions.dll
 Remove-Item $Path/UnityExplorer.BIE.Unity.IL2CPP.CoreCLR.deps.json
+Remove-Item $Path/UnityExplorer.BIE.Unity.IL2CPP.CoreCLR.pdb
 New-Item -Path "$Path" -Name "plugins" -ItemType "directory" -Force
 New-Item -Path "$Path" -Name "plugins/sinai-dev-UnityExplorer" -ItemType "directory" -Force
 Move-Item -Path $Path/UnityExplorer.BIE.Unity.IL2CPP.CoreCLR.dll -Destination $Path/plugins/sinai-dev-UnityExplorer -Force
@@ -145,6 +152,7 @@ lib/ILRepack.exe /target:library /lib:lib/net35 /lib:lib/net35/BepInEx /lib:$Pat
 # (cleanup and move files)
 Remove-Item $Path/Tomlet.dll
 Remove-Item $Path/mcs.dll
+Remove-Item $Path/UnityExplorer.BIE5.Mono.pdb
 New-Item -Path "$Path" -Name "plugins" -ItemType "directory" -Force
 New-Item -Path "$Path" -Name "plugins/sinai-dev-UnityExplorer" -ItemType "directory" -Force
 Move-Item -Path $Path/UnityExplorer.BIE5.Mono.dll -Destination $Path/plugins/sinai-dev-UnityExplorer -Force
@@ -161,6 +169,7 @@ lib/ILRepack.exe /target:library /lib:lib/net35 /lib:lib/net35/BepInEx/build423~
 # (cleanup and move files)
 Remove-Item $Path/Tomlet.dll
 Remove-Item $Path/mcs.dll
+Remove-Item $Path/UnityExplorer.BIE6.Mono.pdb
 New-Item -Path "$Path" -Name "plugins" -ItemType "directory" -Force
 New-Item -Path "$Path" -Name "plugins/sinai-dev-UnityExplorer" -ItemType "directory" -Force
 Move-Item -Path $Path/UnityExplorer.BIE6.Mono.dll -Destination $Path/plugins/sinai-dev-UnityExplorer -Force
@@ -177,6 +186,7 @@ lib/ILRepack.exe /target:library /lib:lib/net35 /lib:lib/net35/BepInEx/build647+
 # (cleanup and move files)
 Remove-Item $Path/Tomlet.dll
 Remove-Item $Path/mcs.dll
+Remove-Item $Path/UnityExplorer.BIE6.Unity.Mono.pdb
 New-Item -Path "$Path" -Name "plugins" -ItemType "directory" -Force
 New-Item -Path "$Path" -Name "plugins/sinai-dev-UnityExplorer" -ItemType "directory" -Force
 Move-Item -Path $Path/UnityExplorer.BIE6.Unity.Mono.dll -Destination $Path/plugins/sinai-dev-UnityExplorer -Force
@@ -193,6 +203,7 @@ lib/ILRepack.exe /target:library /lib:lib/net35 /lib:$Path /internalize /out:$Pa
 # (cleanup and move files)
 Remove-Item $Path/Tomlet.dll
 Remove-Item $Path/mcs.dll
+Remove-Item $Path/UnityExplorer.Standalone.Mono.pdb
 Remove-Item $Path/../UnityExplorer.Standalone.Mono.zip -ErrorAction SilentlyContinue
 compress-archive .\$Path\* $Path/../UnityExplorer.Standalone.Mono.zip
 
@@ -206,6 +217,7 @@ Remove-Item $Path/Tomlet.dll
 Remove-Item $Path/mcs.dll
 Remove-Item $Path/Iced.dll
 Remove-Item $Path/UnhollowerBaseLib.dll
+Remove-Item $Path/UnityExplorer.Standalone.IL2CPP.pdb
 Remove-Item $Path/../UnityExplorer.Standalone.IL2CPP.zip -ErrorAction SilentlyContinue
 compress-archive .\$Path\* $Path/../UnityExplorer.Standalone.IL2CPP.zip
 
