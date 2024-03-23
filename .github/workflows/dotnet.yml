@@ -94,6 +94,12 @@ jobs:
           name: UnityExplorer.Standalone.IL2CPP
           path: ./Release/UnityExplorer.Standalone.IL2CPP/
 
+      - name: Upload Standalone.IL2CPP.CoreCLR
+        uses: actions/upload-artifact@v4
+        with:
+          name: UnityExplorer.Standalone.IL2CPP.CoreCLR
+          path: ./Release/UnityExplorer.Standalone.IL2CPP.CoreCLR/
+
       - name: Upload Standalone.Mono
         uses: actions/upload-artifact@v4
         with:
