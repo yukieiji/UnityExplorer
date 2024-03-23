@@ -25,7 +25,7 @@ Nightly builds can be found [here](https://github.com/yukieiji/UnityExplorer/act
 
 ## BepInEx
 
-| Release | IL2CPP(CoreCLR) | IL2CPP(Unhollower) | Mono |
+| Release | IL2CPP(Il2CppInterop) | IL2CPP(Unhollower) | Mono |
 | ------- | ------ |  ------ | ---- |
 | BIE 6.X be.647+ | ✅ [link](https://github.com/yukieiji/UnityExplorer/releases/latest/download/UnityExplorer.BepInEx.Unity.IL2CPP.CoreCLR.zip) | ✖️ n/a | ✅ [link](https://github.com/yukieiji/UnityExplorer/releases/latest/download/UnityExplorer.BepInEx6.Unity.Mono.zip) |
 | BIE 6.X be.472 to be.577 | ✅ [link](https://github.com/yukieiji/UnityExplorer/releases/latest/download/UnityExplorer.BepInEx.IL2CPP.CoreCLR.zip) | ✅ [link](https://github.com/yukieiji/UnityExplorer/releases/latest/download/UnityExplorer.BepInEx.IL2CPP.zip)  | ✅ [link](https://github.com/yukieiji/UnityExplorer/releases/latest/download/UnityExplorer.BepInEx6.Mono.zip) |
@@ -50,9 +50,9 @@ Nightly builds can be found [here](https://github.com/yukieiji/UnityExplorer/act
 
 ## Standalone
 
-| IL2CPP | Mono |
-| ------ | ---- |
-| ✅ [link](https://github.com/yukieiji/UnityExplorer/releases/latest/download/UnityExplorer.Standalone.IL2CPP.zip) | ✅ [link](https://github.com/yukieiji/UnityExplorer/releases/latest/download/UnityExplorer.Standalone.Mono.zip) | 
+| Il2CppInterop | Unhollower | Mono |
+| ------ | ------ | ---- |
+| ✅ [link](https://github.com/yukieiji/UnityExplorer/releases/latest/download/UnityExplorer.Standalone.IL2CPP.CoreCLR.zip)| ✅ [link](https://github.com/yukieiji/UnityExplorer/releases/latest/download/UnityExplorer.Standalone.IL2CPP.zip) | ✅ [link](https://github.com/yukieiji/UnityExplorer/releases/latest/download/UnityExplorer.Standalone.Mono.zip) | 
 
 The standalone release can be used with any injector or loader of your choice, but it requires you to load the dependencies manually.
 
