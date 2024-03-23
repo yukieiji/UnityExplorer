@@ -221,6 +221,24 @@ Remove-Item $Path/UnityExplorer.Standalone.IL2CPP.pdb
 Remove-Item $Path/../UnityExplorer.Standalone.IL2CPP.zip -ErrorAction SilentlyContinue
 compress-archive .\$Path\* $Path/../UnityExplorer.Standalone.IL2CPP.zip
 
+# ----------- Standalone IL2CPP CoreCLR -----------
+dotnet build src/UnityExplorer.sln -c Release_STANDALONE_Cpp_CoreCLR
+$Path = "Release/UnityExplorer.Standalone.IL2CPP.CoreCLR"
+# ILRepack
+lib/ILRepack.exe /target:library /lib:lib/net6/ /lib:lib/interop/ /lib:$Path /internalize /out:$Path/UnityExplorer.Standalone.IL2CPP.CoreCLR.dll $Path/UnityExplorer.Standalone.IL2CPP.CoreCLR.dll $Path/mcs.dll $Path/Tomlet.dll
+# (cleanup and move files)
+Remove-Item $Path/Tomlet.dll
+Remove-Item $Path/mcs.dll
+Remove-Item $Path/Iced.dll
+Remove-Item $Path/Il2CppInterop.Common.dll
+Remove-Item $Path/Il2CppInterop.Runtime.dll
+Remove-Item $Path/Microsoft.Extensions.Logging.Abstractions.dll
+Remove-Item $Path/UnityExplorer.Standalone.IL2CPP.CoreCLR.pdb
+Remove-Item $Path/UnityExplorer.Standalone.IL2CPP.CoreCLR.deps.json
+Remove-Item $Path/../UnityExplorer.Standalone.IL2CPP.CoreCLR.zip -ErrorAction SilentlyContinue
+compress-archive .\$Path\* $Path/../UnityExplorer.Standalone.IL2CPP.CoreCLR.zip
+
+
 # ----------- Editor (mono) -----------
 $Path1 = "Release/UnityExplorer.Standalone.Mono"
 $Path2 = "UnityEditorPackage/Runtime"
