@@ -15,6 +15,11 @@ body:
       options:
         - label: Yes, I'm on the latest version of UnityExplorer.
           required: true
+  - type: checkboxes
+    id: modwork
+    attributes:
+      label: Will other mods work? (Not mods that change settings, but small mods that access game objects, etc.)
+      description: If not, It's most likely not a UnityExplorer issue.
   - type: dropdown
     id: version
     attributes:
