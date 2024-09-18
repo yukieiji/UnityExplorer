@@ -20,6 +20,8 @@ body:
     attributes:
       label: Will other mods work? (Not mods that change settings, but small mods that access game objects, etc.)
       description: If not, It's most likely not a UnityExplorer issue.
+      options:
+        - label: Yes, work fine!!
   - type: dropdown
     id: version
     attributes:
