@@ -4,6 +4,7 @@
 
 <p align="center">
   🔍 An in-game UI for exploring, debugging and modifying Unity games.
+  🛠️ This is fork of [UnityExplorer](https://github.com/sinai-dev/UnityExplorer) maintained by yukieiji
 </p>
 <p align="center">
   ✔️ Supports most Unity versions from 5.2 to 2021+ (IL2CPP and Mono).
@@ -12,7 +13,7 @@
   ✨ Powered by <a href="https://github.com/yukieiji/UniverseLib">UniverseLib</a>
 </p>
 
-# Changes from the original UnityExplorer
+## Changes from original 
 - Bug fixes due to continued development
   - Il2CPP and Mono support for BepInEx 6.x be.647+([DL:Il2CPP](https://github.com/yukieiji/UnityExplorer/releases/latest/download/UnityExplorer.BepInEx.Unity.IL2CPP.CoreCLR.zip)/[DL:Mono](https://github.com/yukieiji/UnityExplorer/releases/latest/download/UnityExplorer.BepInEx6.Unity.Mono.zip))
   - Compatible with MelonLoader 0.6.x(OpenBeta) or later([DL](https://github.com/yukieiji/UnityExplorer/releases/latest/download/UnityExplorer.MelonLoader.IL2CPP.CoreCLR.zip))
