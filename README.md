@@ -4,13 +4,13 @@
 
 <p align="center">
   🔍 An in-game UI for exploring, debugging and modifying Unity games.
-  🛠️ This is fork of [UnityExplorer](https://github.com/sinai-dev/UnityExplorer) maintained by yukieiji
 </p>
 <p align="center">
   ✔️ Supports most Unity versions from 5.2 to 2021+ (IL2CPP and Mono).
 </p>
 <p align="center">
-  ✨ Powered by <a href="https://github.com/yukieiji/UniverseLib">UniverseLib</a>
+  ✨ Powered by <a href="https://github.com/yukieiji/UniverseLib">UniverseLib</a><br>
+  🛠️ This is fork of <a href="https://github.com/sinai-dev/UnityExplorer">UnityExplorer</a> maintained by yukieiji<br>
 </p>
 
 ## Changes from original 
