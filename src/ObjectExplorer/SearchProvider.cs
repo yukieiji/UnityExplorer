@@ -173,7 +173,7 @@ public static class SearchProvider
             return instances;
         }
 
-        BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
+        BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy;
 
         foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
         {
@@ -196,6 +196,6 @@ public static class SearchProvider
             }
         }
 
-        return instances;
+        return instances.Distinct().ToList();
     }
 }
