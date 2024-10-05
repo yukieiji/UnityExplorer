@@ -196,6 +196,6 @@ public static class SearchProvider
             }
         }
 
-        return instances;
+        return instances.Distinct().ToList();
     }
 }
