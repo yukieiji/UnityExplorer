@@ -9,12 +9,22 @@
   ✔️ Supports most Unity versions from 5.2 to 2021+ (IL2CPP and Mono).
 </p>
 <p align="center">
-  ✨ Powered by <a href="https://github.com/yukieiji/UniverseLib">UniverseLib</a>
+  ✨ Powered by <a href="https://github.com/yukieiji/UniverseLib">UniverseLib</a><br>
+  🛠️ This is fork of <a href="https://github.com/sinai-dev/UnityExplorer">UnityExplorer</a> maintained by yukieiji<br>
 </p>
+
+## Changes from original 
+- Bug fixes due to continued development
+  - Il2CPP and Mono support for BepInEx 6.x be.647+([DL:Il2CPP](https://github.com/yukieiji/UnityExplorer/releases/latest/download/UnityExplorer.BepInEx.Unity.IL2CPP.CoreCLR.zip)/[DL:Mono](https://github.com/yukieiji/UnityExplorer/releases/latest/download/UnityExplorer.BepInEx6.Unity.Mono.zip))
+  - Compatible with MelonLoader 0.6.x(OpenBeta) or later([DL](https://github.com/yukieiji/UnityExplorer/releases/latest/download/UnityExplorer.MelonLoader.IL2CPP.CoreCLR.zip))
+  - and etc..
+-  Stabilize overall performance by adjusting project settings, etc.
+
+If there are any bugs or features you want, please create a [ticket](https://github.com/yukieiji/UnityExplorer/issues/new/choose)!
 
 # Releases  [![](https://img.shields.io/github/downloads/sinai-dev/UnityExplorer/total.svg)](../../releases)
 
-[![](https://img.shields.io/github/release/yukieiji/UnityExplorer.svg?label=version)](../../releases/latest) [![](https://img.shields.io/github/workflow/status/yukieiji/UnityExplorer/Build%20UnityExplorer)](https://github.com/yukieiji/UnityExplorer/actions) [![](https://img.shields.io/github/downloads/sinai-dev/UnityExplorer/latest/total.svg)](../../releases/latest)
+[![](https://img.shields.io/github/release/yukieiji/UnityExplorer.svg?label=version)](../../releases/latest) [![](https://img.shields.io/github/workflow/status/yukieiji/UnityExplorer/Build%20UnityExplorer)](https://github.com/yukieiji/UnityExplorer/actions) [![](https://img.shields.io/github/downloads/yukieiji/UnityExplorer/latest/total.svg)](../../releases/latest)
 
 
 ## Release schedule
