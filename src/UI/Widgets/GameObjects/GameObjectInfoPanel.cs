@@ -243,7 +243,8 @@ namespace UnityExplorer.UI.Widgets
         {
             try
             {
-                HideFlags enumVal = hideFlagsValues[FlagsDropdown.options[value].text];
+                //My IDE is throwing some sort of ambiguity error on this line, which is why I changed it.
+                HideFlags enumVal = hideFlagsValues[FlagsDropdown.options[(Index)value].Cast<Dropdown.OptionData>().text];
                 Target.hideFlags = enumVal;
 
                 UpdateGameObjectInfo(false, true);

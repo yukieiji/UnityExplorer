@@ -703,7 +703,8 @@ var x = 5;
  * Start(enumerator); - Coroutine, starts the IEnumerator as a Coroutine, and returns the Coroutine.
  * Stop(coroutine);   - stop the Coroutine ONLY if it was started with Start(ienumerator).
  * Copy(obj);         - copies the object to the UnityExplorer Clipboard
- * Paste();           - System.Object, the contents of the Clipboard.
+ * Copy(obj,int);     - copies the object to the UnityExplorer Clipboard at the specified location.
+ * Paste;             - List of System.Object, the contents of the Clipboard. Usage: Paste[index]
  * GetUsing();        - prints the current using directives to the console log
  * GetVars();         - prints the names and values of the REPL variables you have defined
  * GetClasses();      - prints the names and members of the classes you have defined
