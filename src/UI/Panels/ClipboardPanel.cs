@@ -187,7 +187,8 @@ namespace UnityExplorer.UI.Panels
 
         public void RefreshList()
         {
-            //Hopefully clearing stuff like this works!
+            //Disable refresh functionality to see if it fixes literally anything.
+            /*//Hopefully clearing stuff like this works!
             CurrentPasteLabel.Clear();
             
             for (int i = 0; i < Current.Count; i++)
@@ -209,6 +210,6 @@ namespace UnityExplorer.UI.Panels
             }
 
             UpdateCurrentPasteInfo();
-        }
+        }*/
     }
 }
