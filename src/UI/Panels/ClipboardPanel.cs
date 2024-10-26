@@ -29,6 +29,7 @@ namespace UnityExplorer.UI.Panels
         public static void SelectClipboardItem(int index)
         {
             selectedItem = index;
+            Debug.Log("SELECTED ITEM REMOVE THIS WHEN DONE!");
         }
 
         /// <summary>
@@ -46,9 +47,7 @@ namespace UnityExplorer.UI.Panels
             {
                 return;
             }
-            Current[selectedItem] = obj;
-            Notification.ShowMessage("Copied to " + selectedItem + "!");
-            UpdateCurrentPasteInfo();
+            Copy(obj,selectedItem);
         }
 
         public static void Copy(object obj, int index)
@@ -62,7 +61,7 @@ namespace UnityExplorer.UI.Panels
                 Current.Insert(index,obj);
             }
             Current[index] = obj;
-            Notification.ShowMessage("Copied to " + selectedItem + "!");
+            Notification.ShowMessage("Copied to clipboard at index " + selectedItem + "!");
             UpdateCurrentPasteInfo();
         }
 
@@ -170,7 +169,7 @@ namespace UnityExplorer.UI.Panels
             // Clear clipboard button
             UniverseLib.UI.Models.ButtonRef clearButton = UIFactory.CreateButton(firstRow, "ClearPasteButton", "Clear Clipboard");
             UIFactory.SetLayoutElement(clearButton.Component.gameObject, minWidth: 120, minHeight: 25, flexibleWidth: 0);
-            clearButton.OnClick += () => Copy(null);
+            clearButton.OnClick += ClearClipboard;
             
             // Inspect Selected button
             UniverseLib.UI.Models.ButtonRef inspectButton = UIFactory.CreateButton(firstRow, "InspectButton", "Inspect");
