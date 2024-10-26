@@ -187,8 +187,7 @@ namespace UnityExplorer.UI.Panels
 
         public void RefreshList()
         {
-            //Disable refresh functionality to see if it fixes literally anything.
-            /*//Hopefully clearing stuff like this works!
+            //Hopefully clearing stuff like this works!
             CurrentPasteLabel.Clear();
             
             for (int i = 0; i < Current.Count; i++)
@@ -208,8 +207,8 @@ namespace UnityExplorer.UI.Panels
                 //This should select a clipboard item...
                 selectThis.OnClick += () => SelectClipboardItem(i);
             }
-
-            UpdateCurrentPasteInfo();
-        }*/
+            
+            //UpdateCurrentPasteInfo();
+        }
     }
 }
