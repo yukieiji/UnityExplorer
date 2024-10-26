@@ -20,7 +20,7 @@ namespace UnityExplorer.UI.Panels
         public override bool ShouldSaveActiveState => true;
         public override bool ShowByDefault => true;
 
-        private static List<Text> CurrentPasteLabel = new List<Text>();
+        private static List<GameObject> clipboardRows = new List<GameObject>();
 
         public ClipboardPanel(UIBase owner) : base(owner)
         {
@@ -187,8 +187,12 @@ namespace UnityExplorer.UI.Panels
 
         public void RefreshList()
         {
-            //Hopefully clearing stuff like this works!
-            CurrentPasteLabel.Clear();
+            foreach (GameObject go in clipboardRows)
+            {
+                //Remove the row
+                GameObject.Destroy(go);
+            }
+            clipboardRows.Clear();
             
             for (int i = 0; i < Current.Count; i++)
             {
@@ -197,15 +201,17 @@ namespace UnityExplorer.UI.Panels
                     new(2, 2, 2, 2), childAlignment: TextAnchor.UpperCenter);
 
                 // Actual current paste info label
-                CurrentPasteLabel.Add(UIFactory.CreateLabel(thisClipboardRow, "CurrentPasteInfo", "not set", TextAnchor.UpperLeft));
-                UIFactory.SetLayoutElement(CurrentPasteLabel[i].gameObject, minHeight: 25, minWidth: 100, flexibleWidth: 999, flexibleHeight: 999);
+                Text label = UIFactory.CreateLabel(thisClipboardRow, "CurrentPasteInfo", "not set", TextAnchor.UpperLeft);
+                UIFactory.SetLayoutElement(label.gameObject, minHeight: 25, minWidth: 100, flexibleWidth: 999, flexibleHeight: 999);
                 
                 // Select button
-                UniverseLib.UI.Models.ButtonRef selectThis = UIFactory.CreateButton(thisClipboardRow, "InspectButton", "Inspect");
+                UniverseLib.UI.Models.ButtonRef selectThis = UIFactory.CreateButton(thisClipboardRow, "SelectButton", "Select");
                 UIFactory.SetLayoutElement(selectThis.Component.gameObject, minHeight: 25, flexibleHeight: 0, minWidth: 80, flexibleWidth: 0);
                 
                 //This should select a clipboard item...
                 selectThis.OnClick += () => SelectClipboardItem(i);
+                
+                clipboardRows.Add(thisClipboardRow);
             }
             
             //UpdateCurrentPasteInfo();
