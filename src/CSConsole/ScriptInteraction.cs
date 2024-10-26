@@ -34,9 +34,15 @@ namespace UnityExplorer.CSConsole
         
         public static void Copy(object obj, int index)
             => ClipboardPanel.Copy(obj,index);
+        
+        public static void CopyToEnd(object obj)
+            => ClipboardPanel.CopyToEnd(obj);
 
-        public static List<object> Paste
-            => ClipboardPanel.Current;
+        public static List<object> Clipboard
+            => ClipboardPanel.ClipboardItems;
+        
+        public static object Paste()
+            => ClipboardPanel.ClipboardItems[ClipboardPanel.selectedItem];
 
         public static void GetUsing()
             => Log(Evaluator.GetUsing());

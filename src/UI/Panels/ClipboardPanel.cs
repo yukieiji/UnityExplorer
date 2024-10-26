@@ -4,7 +4,7 @@ namespace UnityExplorer.UI.Panels
 {
     public class ClipboardPanel : UEPanel
     {
-        public static List<object> Current = new List<object>();
+        public static List<object> ClipboardItems = new List<object>();
         public static int selectedItem = 0;
         public static ClipboardPanel Instance;
         public override string Name => "Clipboard";
@@ -29,8 +29,6 @@ namespace UnityExplorer.UI.Panels
         public static void SelectClipboardItem(int index)
         {
             selectedItem = index;
-            ExplorerCore.Log("Attempting to select list item: " + index);
-            ExplorerCore.Log("Selected item: " + selectedItem);
         }
 
         /// <summary>
@@ -38,16 +36,15 @@ namespace UnityExplorer.UI.Panels
         /// </summary>
         public static void AddNewEntry()
         {
-            Current.Add(null);
-            SelectClipboardItem(Current.Count - 1);
+            ClipboardItems.Add(null);
+            SelectClipboardItem(ClipboardItems.Count - 1);
             UpdateCurrentPasteInfo();
         }
         public static void Copy(object obj)
         {
-            ExplorerCore.Log("Attempting to copy from inspector or something!");
-            if (obj == null || Current.Count <= selectedItem)
+            if (obj == null || ClipboardItems.Count <= selectedItem)
             {
-                ExplorerCore.Log($"The selected item index is outside the range! {Current.Count} is the count.");
+                ExplorerCore.Log($"The selected item index is outside the range! {ClipboardItems.Count} is the count.");
                 return;
             }
             Copy(obj,selectedItem);
@@ -59,27 +56,33 @@ namespace UnityExplorer.UI.Panels
             {
                 return;
             }
-            if (Current.Count() <= selectedItem)
+            if (ClipboardItems.Count() <= selectedItem)
             {
-                ExplorerCore.Log("Inserting into list.");
-                Current.Insert(index,obj);
+                ClipboardItems.Insert(index,obj);
             }
-            Current[index] = obj;
+            ClipboardItems[index] = obj;
             Notification.ShowMessage("Copied to clipboard at index " + selectedItem + "!");
+            UpdateCurrentPasteInfo();
+        }
+
+        public static void CopyToEnd(object obj)
+        {
+            ClipboardItems.Add(obj);
             UpdateCurrentPasteInfo();
         }
 
         public static void RemoveIndex(int i)
         {
-            Current.RemoveAt(i);
+            ClipboardItems.RemoveAt(i);
+            UpdateCurrentPasteInfo();
         }
 
         public static bool TryPaste(Type targetType, out object paste)
         {
-            paste = Current[selectedItem];
-            Type pasteType = Current?.GetActualType();
+            paste = ClipboardItems[selectedItem];
+            Type pasteType = ClipboardItems?.GetActualType();
 
-            if (Current != null && !targetType.IsAssignableFrom(pasteType))
+            if (ClipboardItems != null && !targetType.IsAssignableFrom(pasteType))
             {
                 Notification.ShowMessage($"Cannot assign '{pasteType.Name}' to '{targetType.Name}'!");
                 return false;
@@ -91,34 +94,30 @@ namespace UnityExplorer.UI.Panels
 
         public static void ClearClipboard()
         {
-            Current.Clear();
+            ClipboardItems.Clear();
             UpdateCurrentPasteInfo();
         }
 
         private static void UpdateCurrentPasteInfo()
         {
-            /*for (int i = 0; i < Current.Count; i++)
-            {
-                CurrentPasteLabel[i].text = ToStringUtility.ToStringWithType(Current[i], typeof(object), false);
-            }*/
             Instance.RefreshList();
         }
 
         private static void InspectClipboard()
         {
-            if (Current.Count <= selectedItem)
+            if (ClipboardItems.Count <= selectedItem)
             {
                 //Something has gone wrong, this shouldn't happen!
                 return;
             }
             
-            if (Current[selectedItem].IsNullOrDestroyed())
+            if (ClipboardItems[selectedItem].IsNullOrDestroyed())
             {
                 Notification.ShowMessage("Cannot inspect a null or destroyed object!");
                 return;
             }
 
-            InspectorManager.Inspect(Current[selectedItem]);
+            InspectorManager.Inspect(ClipboardItems[selectedItem]);
         }
 
         public override void SetDefaultSizeAndPosition()
@@ -128,39 +127,6 @@ namespace UnityExplorer.UI.Panels
             this.Rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, MinWidth);
             this.Rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, MinHeight);
         }
-
-        /*protected override void ConstructPanelContent()
-        {
-            this.UIRoot.GetComponent<Image>().color = new(0.1f, 0.1f, 0.1f);
-
-            // Actual panel content
-
-            GameObject firstRow = UIFactory.CreateHorizontalGroup(ContentRoot, "FirstRow", false, false, true, true, 5, new(2, 2, 2, 2), new(1, 1, 1, 0));
-            UIFactory.SetLayoutElement(firstRow, minHeight: 25, flexibleWidth: 999);
-
-            // Title for "Current Paste:"
-            Text currentPasteTitle = UIFactory.CreateLabel(firstRow, "CurrentPasteTitle", "Current paste:", TextAnchor.MiddleLeft, color: Color.grey);
-            UIFactory.SetLayoutElement(currentPasteTitle.gameObject, minHeight: 25, minWidth: 100, flexibleWidth: 999);
-
-            // Clear clipboard button
-            UniverseLib.UI.Models.ButtonRef clearButton = UIFactory.CreateButton(firstRow, "ClearPasteButton", "Clear Clipboard");
-            UIFactory.SetLayoutElement(clearButton.Component.gameObject, minWidth: 120, minHeight: 25, flexibleWidth: 0);
-            clearButton.OnClick += () => Copy(null);
-
-            // Current Paste info row
-            GameObject currentPasteHolder = UIFactory.CreateHorizontalGroup(ContentRoot, "SecondRow", false, false, true, true, 0,
-                new(2, 2, 2, 2), childAlignment: TextAnchor.UpperCenter);
-
-            // Actual current paste info label
-            CurrentPasteLabel = UIFactory.CreateLabel(currentPasteHolder, "CurrentPasteInfo", "not set", TextAnchor.UpperLeft);
-            UIFactory.SetLayoutElement(CurrentPasteLabel.gameObject, minHeight: 25, minWidth: 100, flexibleWidth: 999, flexibleHeight: 999);
-            UpdateCurrentPasteInfo();
-
-            // Inspect button
-            UniverseLib.UI.Models.ButtonRef inspectButton = UIFactory.CreateButton(currentPasteHolder, "InspectButton", "Inspect");
-            UIFactory.SetLayoutElement(inspectButton.Component.gameObject, minHeight: 25, flexibleHeight: 0, minWidth: 80, flexibleWidth: 0);
-            inspectButton.OnClick += InspectClipboard;
-        }*/
         protected override void ConstructPanelContent()
         {
             this.UIRoot.GetComponent<Image>().color = new(0.1f, 0.1f, 0.1f);
@@ -202,7 +168,7 @@ namespace UnityExplorer.UI.Panels
             }
             clipboardRows.Clear();
             
-            for (int i = 0; i < Current.Count; i++)
+            for (int i = 0; i < ClipboardItems.Count; i++)
             {
                 // Current Paste info row
                 GameObject thisClipboardRow = UIFactory.CreateHorizontalGroup(ContentRoot, "SecondRow", false, false, true, true, 0,
@@ -211,9 +177,9 @@ namespace UnityExplorer.UI.Panels
                 // Actual current paste info label
                 Text label = UIFactory.CreateLabel(thisClipboardRow, "CurrentPasteInfo", "not set", TextAnchor.UpperLeft);
                 UIFactory.SetLayoutElement(label.gameObject, minHeight: 25, minWidth: 100, flexibleWidth: 999, flexibleHeight: 999);
-                if (Current[i] != null)
+                if (ClipboardItems[i] != null)
                 {
-                    label.text = ToStringUtility.ToStringWithType(Current[i], typeof(object), false);
+                    label.text = ToStringUtility.ToStringWithType(ClipboardItems[i], typeof(object), false);
                 }
                 
                 // Remove button
@@ -232,8 +198,6 @@ namespace UnityExplorer.UI.Panels
                 
                 clipboardRows.Add(thisClipboardRow);
             }
-            
-            //UpdateCurrentPasteInfo();
         }
     }
 }

@@ -697,14 +697,16 @@ var x = 5;
 /* The following helpers are available in REPL mode:
  * CurrentTarget;     - System.Object, the target of the active Inspector tab
  * AllTargets;        - System.Object[], the targets of all Inspector tabs
+ * Clipboard;         - List<System.Object>, all of the current items in the clipboard.
  * Log(obj);          - prints a message to the console log
  * Inspect(obj);      - inspect the object with the Inspector
  * Inspect(someType); - inspect a Type with static reflection
  * Start(enumerator); - Coroutine, starts the IEnumerator as a Coroutine, and returns the Coroutine.
  * Stop(coroutine);   - stop the Coroutine ONLY if it was started with Start(ienumerator).
- * Copy(obj);         - copies the object to the UnityExplorer Clipboard
- * Copy(obj,int);     - copies the object to the UnityExplorer Clipboard at the specified location.
- * Paste;             - List of System.Object, the contents of the Clipboard. Usage: Paste[index]
+ * Copy(obj);         - Copies the object to the selected slot on the Clipboard.
+ * Copy(obj,int);     - Copies the object to the specified index on the Clipboard.
+ * CopyToEnd(obj)     - Adds a new entry to the UnityExplorer Clipboard, and places this object inside.
+ * Paste();           - Pastes the object from the selected index of the clipboard.
  * GetUsing();        - prints the current using directives to the console log
  * GetVars();         - prints the names and values of the REPL variables you have defined
  * GetClasses();      - prints the names and members of the classes you have defined
