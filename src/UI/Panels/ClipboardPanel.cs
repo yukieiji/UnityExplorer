@@ -69,6 +69,11 @@ namespace UnityExplorer.UI.Panels
             UpdateCurrentPasteInfo();
         }
 
+        public static void RemoveIndex(int i)
+        {
+            Current.RemoveAt(i);
+        }
+
         public static bool TryPaste(Type targetType, out object paste)
         {
             paste = Current[selectedItem];
@@ -211,12 +216,19 @@ namespace UnityExplorer.UI.Panels
                     label.text = ToStringUtility.ToStringWithType(Current[i], typeof(object), false);
                 }
                 
+                // Remove button
+                UniverseLib.UI.Models.ButtonRef removeThis = UIFactory.CreateButton(thisClipboardRow, "RemoveButton", "Remove");
+                UIFactory.SetLayoutElement(removeThis.Component.gameObject, minHeight: 25, flexibleHeight: 0, minWidth: 80, flexibleWidth: 0);
+                
+                
                 // Select button
                 UniverseLib.UI.Models.ButtonRef selectThis = UIFactory.CreateButton(thisClipboardRow, "SelectButton", "Select");
                 UIFactory.SetLayoutElement(selectThis.Component.gameObject, minHeight: 25, flexibleHeight: 0, minWidth: 80, flexibleWidth: 0);
                 
                 //This should select a clipboard item...
-                selectThis.OnClick += () => SelectClipboardItem(i);
+                int thisItemIndexInList = i;
+                selectThis.OnClick += () => SelectClipboardItem(thisItemIndexInList);
+                removeThis.OnClick += () => RemoveIndex(thisItemIndexInList);
                 
                 clipboardRows.Add(thisClipboardRow);
             }
