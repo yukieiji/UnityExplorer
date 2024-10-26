@@ -29,7 +29,8 @@ namespace UnityExplorer.UI.Panels
         public static void SelectClipboardItem(int index)
         {
             selectedItem = index;
-            Debug.Log("SELECTED ITEM REMOVE THIS WHEN DONE!");
+            ExplorerCore.Log("Attempting to select list item: " + index);
+            ExplorerCore.Log("Selected item: " + selectedItem);
         }
 
         /// <summary>
@@ -43,8 +44,10 @@ namespace UnityExplorer.UI.Panels
         }
         public static void Copy(object obj)
         {
+            ExplorerCore.Log("Attempting to copy from inspector or something!");
             if (obj == null || Current.Count <= selectedItem)
             {
+                ExplorerCore.Log($"The selected item index is outside the range! {Current.Count} is the count.");
                 return;
             }
             Copy(obj,selectedItem);
@@ -58,6 +61,7 @@ namespace UnityExplorer.UI.Panels
             }
             if (Current.Count() <= selectedItem)
             {
+                ExplorerCore.Log("Inserting into list.");
                 Current.Insert(index,obj);
             }
             Current[index] = obj;
