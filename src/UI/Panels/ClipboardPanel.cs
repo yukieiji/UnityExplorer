@@ -187,6 +187,7 @@ namespace UnityExplorer.UI.Panels
 
         public void RefreshList()
         {
+            //Hopefully clearing stuff like this works!
             CurrentPasteLabel.Clear();
             
             for (int i = 0; i < Current.Count; i++)
