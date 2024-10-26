@@ -43,7 +43,7 @@ namespace UnityExplorer.UI.Panels
         }
         public static void Copy(object obj)
         {
-            if (obj == null || Current.Count() <= selectedItem)
+            if (obj == null || Current.Count <= selectedItem)
             {
                 return;
             }
@@ -202,6 +202,10 @@ namespace UnityExplorer.UI.Panels
                 // Actual current paste info label
                 Text label = UIFactory.CreateLabel(thisClipboardRow, "CurrentPasteInfo", "not set", TextAnchor.UpperLeft);
                 UIFactory.SetLayoutElement(label.gameObject, minHeight: 25, minWidth: 100, flexibleWidth: 999, flexibleHeight: 999);
+                if (Current[i] != null)
+                {
+                    label.text = ToStringUtility.ToStringWithType(Current[i], typeof(object), false);
+                }
                 
                 // Select button
                 UniverseLib.UI.Models.ButtonRef selectThis = UIFactory.CreateButton(thisClipboardRow, "SelectButton", "Select");
