@@ -47,10 +47,10 @@ namespace UnityExplorer.UI.Panels
                 ExplorerCore.Log($"The selected item index is outside the range! {ClipboardItems.Count} is the count.");
                 return;
             }
-            Copy(obj,selectedItem);
+            Copy(obj,selectedItem, true);
         }
 
-        public static void Copy(object obj, int index)
+        public static void Copy(object obj, int index, bool showNotification)
         {
             if (obj == null)
             {
@@ -61,7 +61,8 @@ namespace UnityExplorer.UI.Panels
                 ClipboardItems.Insert(index,obj);
             }
             ClipboardItems[index] = obj;
-            Notification.ShowMessage("Copied to clipboard at index " + selectedItem + "!");
+            if(showNotification)
+                Notification.ShowMessage("Copied to clipboard at index " + selectedItem + "!");
             UpdateCurrentPasteInfo();
         }
 
@@ -79,10 +80,16 @@ namespace UnityExplorer.UI.Panels
 
         public static bool TryPaste(Type targetType, out object paste)
         {
+            if (selectedItem >= ClipboardItems.Count)
+            {
+                Notification.ShowMessage($"Cannot paste an item that is out of range!");
+                paste = null;
+                return false;
+            }
             paste = ClipboardItems[selectedItem];
-            Type pasteType = ClipboardItems?.GetActualType();
+            Type pasteType = ClipboardItems[selectedItem]?.GetActualType();
 
-            if (ClipboardItems != null && !targetType.IsAssignableFrom(pasteType))
+            if (ClipboardItems[selectedItem] != null && !targetType.IsAssignableFrom(pasteType))
             {
                 Notification.ShowMessage($"Cannot assign '{pasteType.Name}' to '{targetType.Name}'!");
                 return false;

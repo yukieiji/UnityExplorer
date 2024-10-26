@@ -33,7 +33,7 @@ namespace UnityExplorer.CSConsole
             => ClipboardPanel.Copy(obj);
         
         public static void Copy(object obj, int index)
-            => ClipboardPanel.Copy(obj,index);
+            => ClipboardPanel.Copy(obj,index,false);
         
         public static void CopyToEnd(object obj)
             => ClipboardPanel.CopyToEnd(obj);
