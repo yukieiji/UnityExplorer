@@ -359,7 +359,4 @@
       <Link>UniverseLib.csproj</Link>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\UniverseLib\src\UniverseLib.csproj" />
-  </ItemGroup>
 </Project>
