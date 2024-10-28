@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-using UnityExplorer.Config;
+﻿using UnityExplorer.Config;
 
 namespace UnityExplorer.Translation;
 
@@ -53,6 +51,7 @@ public sealed partial class TranslationManager
         { "member_signature_blacklist_hint", "Use this to blacklist certain member signatures if they are known to cause a crash or other issues.\r\n" +
             "Seperate signatures with a semicolon ';'.\r\n" +
             "For example, to blacklist Camera.main, you would add 'UnityEngine.Camera.main;'" },
+        { "clipboard", "Clipboard" }
     };
 
     private static Dictionary<string, string> jp = new()

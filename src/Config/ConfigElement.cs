@@ -1,6 +1,4 @@
-﻿using UnityExplorer.Translation;
-
-namespace UnityExplorer.Config
+﻿namespace UnityExplorer.Config
 {
     public class ConfigElement<T> : IConfigElement
     {

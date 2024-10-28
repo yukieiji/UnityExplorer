@@ -7,6 +7,7 @@ global using UnityEngine;
 global using UnityEngine.UI;
 global using UniverseLib;
 global using UniverseLib.Utility;
+global using UnityExplorer.Translation;
 using UnityExplorer.Config;
 using UnityExplorer.ObjectExplorer;
 using UnityExplorer.Runtime;

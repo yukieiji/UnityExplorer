@@ -1,12 +1,14 @@
 ﻿using UniverseLib.UI;
 
+using UnityExplorer.Translation;
+
 namespace UnityExplorer.UI.Panels
 {
     public class ClipboardPanel : UEPanel
     {
         public static object Current { get; private set; }
 
-        public override string Name => "Clipboard";
+        public override string Name => TranslationManager.Get("clipboard");
         public override UIManager.Panels PanelType => UIManager.Panels.Clipboard;
 
         public override int MinWidth => 500;

@@ -1,5 +1,4 @@
-﻿using UnityExplorer.Translation;
-using UnityExplorer.UI;
+﻿using UnityExplorer.UI;
 
 namespace UnityExplorer.Config
 {
