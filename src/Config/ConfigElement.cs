@@ -1,9 +1,15 @@
-﻿namespace UnityExplorer.Config
+﻿using UnityExplorer.Translation;
+
+namespace UnityExplorer.Config
 {
     public class ConfigElement<T> : IConfigElement
     {
-        public string Name { get; }
-        public string Description { get; }
+        public string Name => TranslationManager.Get(NameKey);
+        public string Description => TranslationManager.Get(DescriptionKey);
+        public string DefaultDescription => TranslationManager.Get(TranslationManager.Lang.English, DescriptionKey);
+
+        public string NameKey { get; }
+        public string DescriptionKey => $"{NameKey}_hint";
 
         public bool IsInternal { get; }
         public Type ElementType => typeof(T);
@@ -30,10 +36,9 @@
             set => SetValue((T)value);
         }
 
-        public ConfigElement(string name, string description, T defaultValue, bool isInternal = false)
+        public ConfigElement(string name, T defaultValue, bool isInternal = false)
         {
-            Name = name;
-            Description = description;
+            NameKey = name;
 
             m_value = defaultValue;
             DefaultValue = defaultValue;

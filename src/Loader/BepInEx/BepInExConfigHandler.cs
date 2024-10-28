@@ -17,7 +17,7 @@ namespace UnityExplorer.Loader.BIE
 
         public override void RegisterConfigElement<T>(ConfigElement<T> config)
         {
-            ConfigEntry<T> entry = Config.Bind(CTG_NAME, config.Name, config.Value, config.Description);
+            ConfigEntry<T> entry = Config.Bind(CTG_NAME, config.NameKey, config.Value, config.DefaultDescription);
 
             entry.SettingChanged += (object o, EventArgs e) =>
             {
@@ -27,18 +27,18 @@ namespace UnityExplorer.Loader.BIE
 
         public override T GetConfigValue<T>(ConfigElement<T> element)
         {
-            if (Config.TryGetEntry(CTG_NAME, element.Name, out ConfigEntry<T> configEntry))
+            if (Config.TryGetEntry(CTG_NAME, element.NameKey, out ConfigEntry<T> configEntry))
                 return configEntry.Value;
             else
-                throw new Exception("Could not get config entry '" + element.Name + "'");
+                throw new Exception($"Could not get config entry '{element.NameKey}'");
         }
 
         public override void SetConfigValue<T>(ConfigElement<T> element, T value)
         {
-            if (Config.TryGetEntry(CTG_NAME, element.Name, out ConfigEntry<T> configEntry))
+            if (Config.TryGetEntry(CTG_NAME, element.NameKey, out ConfigEntry<T> configEntry))
                 configEntry.Value = value;
             else
-                ExplorerCore.Log("Could not get config entry '" + element.Name + "'");
+                ExplorerCore.Log($"Could not get config entry '{element.NameKey}'");
         }
 
         public override void LoadConfig()
