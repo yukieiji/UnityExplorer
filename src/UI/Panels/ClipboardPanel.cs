@@ -1,7 +1,5 @@
 ﻿using UniverseLib.UI;
 
-using UnityExplorer.Translation;
-
 namespace UnityExplorer.UI.Panels
 {
     public class ClipboardPanel : UEPanel
@@ -30,7 +28,7 @@ namespace UnityExplorer.UI.Panels
         public static void Copy(object obj)
         {
             Current = obj;
-            Notification.ShowMessage("Copied!");
+            Notification.ShowMessage(TranslationManager.Get("copied"));
             UpdateCurrentPasteInfo();
         }
 
@@ -41,11 +39,12 @@ namespace UnityExplorer.UI.Panels
 
             if (Current != null && !targetType.IsAssignableFrom(pasteType))
             {
-                Notification.ShowMessage($"Cannot assign '{pasteType.Name}' to '{targetType.Name}'!");
+                Notification.ShowMessage(
+                    TranslationManager.Get("cannot_assign", pasteType.Name, targetType.Name));
                 return false;
             }
 
-            Notification.ShowMessage("Pasted!");
+            Notification.ShowMessage(TranslationManager.Get("pasted"));
             return true;
         }
 
@@ -64,7 +63,7 @@ namespace UnityExplorer.UI.Panels
         {
             if (Current.IsNullOrDestroyed())
             {
-                Notification.ShowMessage("Cannot inspect a null or destroyed object!");
+                Notification.ShowMessage(TranslationManager.Get("cannot_inspect"));
                 return;
             }
 
@@ -89,11 +88,11 @@ namespace UnityExplorer.UI.Panels
             UIFactory.SetLayoutElement(firstRow, minHeight: 25, flexibleWidth: 999);
 
             // Title for "Current Paste:"
-            Text currentPasteTitle = UIFactory.CreateLabel(firstRow, "CurrentPasteTitle", "Current paste:", TextAnchor.MiddleLeft, color: Color.grey);
+            Text currentPasteTitle = UIFactory.CreateLabel(firstRow, "CurrentPasteTitle", TranslationManager.Get("current_paste"), TextAnchor.MiddleLeft, color: Color.grey);
             UIFactory.SetLayoutElement(currentPasteTitle.gameObject, minHeight: 25, minWidth: 100, flexibleWidth: 999);
 
             // Clear clipboard button
-            UniverseLib.UI.Models.ButtonRef clearButton = UIFactory.CreateButton(firstRow, "ClearPasteButton", "Clear Clipboard");
+            UniverseLib.UI.Models.ButtonRef clearButton = UIFactory.CreateButton(firstRow, "ClearPasteButton", TranslationManager.Get("clear_clipboard"));
             UIFactory.SetLayoutElement(clearButton.Component.gameObject, minWidth: 120, minHeight: 25, flexibleWidth: 0);
             clearButton.OnClick += () => Copy(null);
 
@@ -102,12 +101,12 @@ namespace UnityExplorer.UI.Panels
                 new(2, 2, 2, 2), childAlignment: TextAnchor.UpperCenter);
 
             // Actual current paste info label
-            CurrentPasteLabel = UIFactory.CreateLabel(currentPasteHolder, "CurrentPasteInfo", "not set", TextAnchor.UpperLeft);
+            CurrentPasteLabel = UIFactory.CreateLabel(currentPasteHolder, "CurrentPasteInfo", TranslationManager.Get("not_set"), TextAnchor.UpperLeft);
             UIFactory.SetLayoutElement(CurrentPasteLabel.gameObject, minHeight: 25, minWidth: 100, flexibleWidth: 999, flexibleHeight: 999);
             UpdateCurrentPasteInfo();
 
             // Inspect button
-            UniverseLib.UI.Models.ButtonRef inspectButton = UIFactory.CreateButton(currentPasteHolder, "InspectButton", "Inspect");
+            UniverseLib.UI.Models.ButtonRef inspectButton = UIFactory.CreateButton(currentPasteHolder, "InspectButton", TranslationManager.Get("inspect"));
             UIFactory.SetLayoutElement(inspectButton.Component.gameObject, minHeight: 25, flexibleHeight: 0, minWidth: 80, flexibleWidth: 0);
             inspectButton.OnClick += InspectClipboard;
         }

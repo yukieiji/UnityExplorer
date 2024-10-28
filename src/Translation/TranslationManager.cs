@@ -51,7 +51,16 @@ public sealed partial class TranslationManager
         { "member_signature_blacklist_hint", "Use this to blacklist certain member signatures if they are known to cause a crash or other issues.\r\n" +
             "Seperate signatures with a semicolon ';'.\r\n" +
             "For example, to blacklist Camera.main, you would add 'UnityEngine.Camera.main;'" },
-        { "clipboard", "Clipboard" }
+        { "clipboard", "Clipboard" },
+        { "copied", "Copied!" },
+        { "pasted", "Pasted!" },
+        { "cannot_inspect", "Cannot inspect a null or destroyed object!" },
+        { "cannot_assign", "Cannot assign '{0}' to '{1}'!" },
+        { "current_paste", "Current paste:" },
+        { "clear_clipboard", "Clear Clipboard" },
+        { "not_set", "not set" },
+        { "inspect", "Inspect" },
+        { "not_set", "not set" },
     };
 
     private static Dictionary<string, string> jp = new()
@@ -110,6 +119,13 @@ public sealed partial class TranslationManager
         }
         return ret;
     }
+
+    public static string Get(string key, params object[] parts)
+    {
+        string row_val = Get(key);
+        return string.Format(row_val, parts);
+    }
+
     public static string Get(string key)
         => Get(ConfigManager.Lang_Toggle.Value, key);
 }
