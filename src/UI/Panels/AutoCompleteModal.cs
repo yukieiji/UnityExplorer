@@ -15,7 +15,7 @@ namespace UnityExplorer.UI.Panels
     {
         public static AutoCompleteModal Instance => UIManager.GetPanel<AutoCompleteModal>(UIManager.Panels.AutoCompleter);
 
-        public override string Name => "AutoCompleter";
+        public override string Name => TranslationManager.Get("autocompleter");
         public override UIManager.Panels PanelType => UIManager.Panels.AutoCompleter;
 
         public override int MinWidth => 100;
@@ -230,13 +230,13 @@ namespace UnityExplorer.UI.Panels
 
             InputFieldRef input = CurrentHandler.InputField;
 
-            //if (!input.Component.isFocused 
+            //if (!input.Component.isFocused
             //    || (input.Component.caretPosition == lastCaretPosition && input.UIRoot.transform.position == lastInputPosition))
             //    return;
 
             if (input.Component.caretPosition == lastCaretPosition && input.UIRoot.transform.position == lastInputPosition)
                 return;
-            
+
             if (CurrentHandler.AnchorToCaretPosition)
             {
                 if (!input.Component.isFocused)
@@ -322,7 +322,7 @@ namespace UnityExplorer.UI.Panels
 
             navigationTipRow = UIFactory.CreateHorizontalGroup(this.ContentRoot, "BottomRow", true, true, true, true, 0, new Vector4(2, 2, 2, 2));
             UIFactory.SetLayoutElement(navigationTipRow, minHeight: 20, flexibleWidth: 9999);
-            UIFactory.CreateLabel(navigationTipRow, "HelpText", "Up/Down to select, Enter to use, Esc to close",
+            UIFactory.CreateLabel(navigationTipRow, "HelpText", TranslationManager.Get("help_updown_esc"),
                 TextAnchor.MiddleLeft, Color.grey, false, 13);
 
             UIRoot.SetActive(false);

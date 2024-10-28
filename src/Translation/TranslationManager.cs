@@ -61,6 +61,8 @@ public sealed partial class TranslationManager
         { "not_set", "not set" },
         { "inspect", "Inspect" },
         { "not_set", "not set" },
+        { "autocompleter", "AutoCompleter" },
+        { "help_updown_esc", "Up/Down to select, Enter to use, Esc to close" }
     };
 
     private static Dictionary<string, string> jp = new()
