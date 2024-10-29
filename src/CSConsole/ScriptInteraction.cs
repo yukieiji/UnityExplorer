@@ -33,7 +33,10 @@ namespace UnityExplorer.CSConsole
             => ClipboardPanel.Copy(obj);
 
         public static object Paste()
-            => ClipboardPanel.Current;
+        {
+            _ = ClipboardPanel.TryGetCurrent(out object obj);
+            return obj;
+        }
 
         public static void GetUsing()
             => Log(Evaluator.GetUsing());

@@ -6,8 +6,6 @@ namespace UnityExplorer.UI.Panels;
 
 public class ClipboardPanel : UEPanel
 {
-    public static object Current => copedObject.Peek();
-
     public override string Name => "Clipboard";
     public override UIManager.Panels PanelType => UIManager.Panels.Clipboard;
 
@@ -23,7 +21,7 @@ public class ClipboardPanel : UEPanel
 
     private static Text? CurrentPasteLabel;
 
-    private static readonly Stack<object> copedObject = new Stack<object>();
+    private static Stack<object> copedObject = new Stack<object>();
 
     public ClipboardPanel(UIBase owner) : base(owner)
     {
@@ -36,17 +34,23 @@ public class ClipboardPanel : UEPanel
         UpdateCurrentPasteInfo();
     }
 
-    public static bool TryPaste(Type targetType, out object? paste)
+    public static bool TryGetCurrent(out object? result)
     {
         if (copedObject.Count == 0)
         {
-            paste = null;
+            result = null;
             return false;
         }
+        result = copedObject.Peek();
+        return true;
+    }
 
-        paste = Current;
-
-        if (!IsValidObject(targetType, paste))
+    public static bool TryPaste(Type targetType, out object? paste)
+    {
+        if (!(
+                TryGetCurrent(out paste) &&
+                IsValidObject(targetType, paste)
+            ))
         {
             return false;
         }
@@ -56,20 +60,15 @@ public class ClipboardPanel : UEPanel
 
     public static bool TyrPaste(Type targetType, int index, out object? paste)
     {
-        if (copedObject.Count == 0)
+        if (copedObject.Count <= index)
         {
             paste = null;
             return false;
         }
 
         object[] arr = copedObject.ToArray();
-        if (arr.Length <= index)
-        {
-            paste = null;
-            return false;
-        }
-
         paste = arr[index];
+
         if (!IsValidObject(targetType, paste))
         {
             return false;
@@ -98,22 +97,26 @@ public class ClipboardPanel : UEPanel
 
     private static void UpdateCurrentPasteInfo()
     {
-        if (CurrentPasteLabel == null)
+        if (!(
+                CurrentPasteLabel != null &&
+                TryGetCurrent(out object? current)
+            ))
         {
             return;
         }
-        CurrentPasteLabel.text = ToStringUtility.ToStringWithType(Current, typeof(object), false);
+        CurrentPasteLabel.text = ToStringUtility.ToStringWithType(current, typeof(object), false);
     }
 
     private static void InspectClipboard()
     {
-        if (Current.IsNullOrDestroyed())
+        if (!TryGetCurrent(out object? current) ||
+            current.IsNullOrDestroyed())
         {
             Notification.ShowMessage("Cannot inspect a null or destroyed object!");
             return;
         }
 
-        InspectorManager.Inspect(Current);
+        InspectorManager.Inspect(current);
     }
 
     public override void SetDefaultSizeAndPosition()
