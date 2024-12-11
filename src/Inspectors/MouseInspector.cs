@@ -30,7 +30,7 @@ namespace UnityExplorer.Inspectors
             MouseInspectMode.World => worldInspector,
             _ => null,
         };
-
+        
         private static Vector3 lastMousePos;
 
         // UIPanel
@@ -44,7 +44,8 @@ namespace UnityExplorer.Inspectors
         public override Vector2 DefaultAnchorMax => Vector2.zero;
 
         public override bool CanDragAndResize => false;
-
+        
+        internal Text inspectorLabelTitle;
         internal Text objNameLabel;
         internal Text objPathLabel;
         internal Text mousePosLabel;
@@ -181,7 +182,6 @@ namespace UnityExplorer.Inspectors
             Rect.pivot = new Vector2(0.5f, 1);
             Rect.sizeDelta = new Vector2(700, 150);
         }
-
         protected override void ConstructPanelContent()
         {
             // hide title bar
@@ -192,12 +192,11 @@ namespace UnityExplorer.Inspectors
             UIFactory.SetLayoutElement(inspectContent, flexibleWidth: 9999, flexibleHeight: 9999);
 
             // Title text
-
-            Text title = UIFactory.CreateLabel(inspectContent,
+            inspectorLabelTitle = UIFactory.CreateLabel(inspectContent,
                 "InspectLabel",
-                "<b>Mouse Inspector</b> (press <b>ESC</b> to cancel)",
+                "",
                 TextAnchor.MiddleCenter);
-            UIFactory.SetLayoutElement(title.gameObject, flexibleWidth: 9999);
+            UIFactory.SetLayoutElement(inspectorLabelTitle.gameObject, flexibleWidth: 9999);
 
             mousePosLabel = UIFactory.CreateLabel(inspectContent, "MousePosLabel", "Mouse Position:", TextAnchor.MiddleCenter);
 

@@ -20,6 +20,7 @@ namespace UnityExplorer.Inspectors.MouseInspectors
         public override void OnBeginMouseInspect()
         {
             SetupUIRaycast();
+            MouseInspector.Instance.inspectorLabelTitle.text = "<b>UI Inspector</b> (press <b>ESC</b> to cancel)";
             MouseInspector.Instance.objPathLabel.text = "";
         }
 

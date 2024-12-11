@@ -2,20 +2,37 @@
 {
     public class WorldInspector : MouseInspectorBase
     {
-        private static Camera MainCamera;
+        internal static Camera MainCamera;
         private static GameObject lastHitObject;
 
         public override void OnBeginMouseInspect()
         {
             MainCamera = Camera.main;
+            var camList = Camera.allCameras.ToList();
 
             if (!MainCamera)
             {
-                ExplorerCore.LogWarning("No MainCamera found! Cannot inspect world!");
-                return;
+                ExplorerCore.LogWarning("No Main Camera was found, trying to find a camera named 'Main Camera' or 'MainCamera'");
+                // Try to find a camera named "Main Camera" or "MainCamera"
+                MainCamera = camList.FirstOrDefault(c => c.name is "Main Camera" or "MainCamera");
+                if (!MainCamera)
+                {
+                    ExplorerCore.LogWarning("No camera named 'Main Camera' or 'MainCamera' found, using the first camera created");
+                    
+                    // If no camera is named "Main Camera" or "MainCamera", use the first camera that was created
+                    MainCamera = camList.FirstOrDefault();
+                    if (!MainCamera)
+                    {
+                        //this should never happen
+                        ExplorerCore.LogWarning("No valid cameras found! Cannot inspect world!");
+                        return;
+                    }
+                }
             }
-        }
 
+            MouseInspector.Instance.inspectorLabelTitle.text = $"<b>World Inspector ({MainCamera.name})</b> (press <b>ESC</b> to cancel)";
+            ExplorerCore.Log($"Using camera: '{MainCamera.transform.GetTransformPath(true)}'");
+        }
         public override void ClearHitData()
         {
             lastHitObject = null;
