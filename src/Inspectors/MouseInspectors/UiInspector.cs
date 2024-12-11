@@ -17,11 +17,13 @@ namespace UnityExplorer.Inspectors.MouseInspectors
         private static readonly List<CanvasGroup> wasDisabledCanvasGroups = new();
         private static readonly List<GameObject> objectsAddedCastersTo = new();
 
+        private const string DEFAULT_INSPECTOR_TITLE = "<b>UI Inspector</b> (press <b>ESC</b> to cancel)";
+
         public override void OnBeginMouseInspect()
         {
             SetupUIRaycast();
-            MouseInspector.Instance.inspectorLabelTitle.text = "<b>UI Inspector</b> (press <b>ESC</b> to cancel)";
-            MouseInspector.Instance.objPathLabel.text = "";
+            MouseInspector.Instance.UpdateInspectorTitle(DEFAULT_INSPECTOR_TITLE);
+            MouseInspector.Instance.UpdateObjectPathLabel("");
         }
 
         public override void ClearHitData()
@@ -71,9 +73,9 @@ namespace UnityExplorer.Inspectors.MouseInspectors
             }
 
             if (currentHitObjects.Any())
-                MouseInspector.Instance.objNameLabel.text = $"Click to view UI Objects under mouse: {currentHitObjects.Count}";
+                MouseInspector.Instance.UpdateObjectNameLabel($"Click to view UI Objects under mouse: {currentHitObjects.Count}");
             else
-                MouseInspector.Instance.objNameLabel.text = $"No UI objects under mouse.";
+                MouseInspector.Instance.UpdateObjectNameLabel("No UI objects under mouse.");
         }
 
         private static void SetupUIRaycast()

@@ -45,10 +45,10 @@ namespace UnityExplorer.Inspectors
 
         public override bool CanDragAndResize => false;
         
-        internal Text inspectorLabelTitle;
-        internal Text objNameLabel;
-        internal Text objPathLabel;
-        internal Text mousePosLabel;
+        private Text inspectorLabelTitle;
+        private Text objNameLabel;
+        private Text objPathLabel;
+        private Text mousePosLabel;
 
         public MouseInspector(UIBase owner) : base(owner)
         {
@@ -121,6 +121,45 @@ namespace UnityExplorer.Inspectors
                 UpdateInspect();
 
             return Inspecting;
+        }
+        
+        /// <summary>
+        /// Updates the title text in the inspector UI, if the inspector title label is assigned.
+        /// </summary>
+        /// <param name="title">The new title text to display in the inspector.</param>
+        internal void UpdateInspectorTitle(string title)
+        {
+            // Unity null check - if inspectorLabelTitle is assigned, update its text.
+            if (inspectorLabelTitle)
+            {
+                inspectorLabelTitle.text = title;
+            }
+        }
+
+        /// <summary>
+        /// Updates the object name label in the inspector UI, if the label is assigned.
+        /// </summary>
+        /// <param name="name">The new object name to display.</param>
+        internal void UpdateObjectNameLabel(string name)
+        {
+            // Unity null check - if objNameLabel is assigned, update its text.
+            if (objNameLabel)
+            {
+                objNameLabel.text = name;
+            }
+        }
+
+        /// <summary>
+        /// Updates the object path label in the inspector UI, if the label is assigned.
+        /// </summary>
+        /// <param name="path">The new object path to display.</param>
+        internal void UpdateObjectPathLabel(string path)
+        {
+            // Unity null check - if objPathLabel is assigned, update its text.
+            if (objPathLabel)
+            {
+                objPathLabel.text = path;
+            }
         }
 
         public void UpdateInspect()

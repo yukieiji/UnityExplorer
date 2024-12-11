@@ -2,37 +2,36 @@
 {
     public class WorldInspector : MouseInspectorBase
     {
-        internal static Camera MainCamera;
+        private static Camera MainCamera;
         private static GameObject lastHitObject;
 
         public override void OnBeginMouseInspect()
         {
-            MainCamera = Camera.main;
-            var camList = Camera.allCameras.ToList();
-
-            if (!MainCamera)
+            if (!EnsureMainCamera())
             {
-                ExplorerCore.LogWarning("No Main Camera was found, trying to find a camera named 'Main Camera' or 'MainCamera'");
-                // Try to find a camera named "Main Camera" or "MainCamera"
-                MainCamera = camList.FirstOrDefault(c => c.name is "Main Camera" or "MainCamera");
-                if (!MainCamera)
-                {
-                    ExplorerCore.LogWarning("No camera named 'Main Camera' or 'MainCamera' found, using the first camera created");
-                    
-                    // If no camera is named "Main Camera" or "MainCamera", use the first camera that was created
-                    MainCamera = camList.FirstOrDefault();
-                    if (!MainCamera)
-                    {
-                        //this should never happen
-                        ExplorerCore.LogWarning("No valid cameras found! Cannot inspect world!");
-                        return;
-                    }
-                }
+                ExplorerCore.LogWarning("No valid cameras found! Cannot inspect world!");
             }
-
-            MouseInspector.Instance.inspectorLabelTitle.text = $"<b>World Inspector ({MainCamera.name})</b> (press <b>ESC</b> to cancel)";
-            ExplorerCore.Log($"Using camera: '{MainCamera.transform.GetTransformPath(true)}'");
         }
+
+        /// <summary>
+        /// Checks if the given camera is valid. If it is, assigns it as the MainCamera,
+        /// updates the inspector title, logs its usage, and returns true.
+        /// Returns false if the camera is invalid.
+        /// </summary>
+        /// <param name="cam">The camera to validate and possibly assign.</param>
+        /// <returns>True if the camera is valid and assigned as MainCamera; false otherwise.</returns>
+        private static bool IsValidCam(Camera cam)
+        {
+            if (!cam) return false;
+
+            MainCamera = cam;
+            MouseInspector.Instance.UpdateInspectorTitle(
+                $"<b>World Inspector ({MainCamera.name})</b> (press <b>ESC</b> to cancel)"
+            );
+            ExplorerCore.Log($"Using '{MainCamera.transform.GetTransformPath(true)}'");
+            return true;
+        }
+        
         public override void ClearHitData()
         {
             lastHitObject = null;
@@ -42,12 +41,40 @@
         {
             InspectorManager.Inspect(lastHitObject);
         }
+        
+        /// <summary>
+        /// Attempts to ensure that MainCamera is assigned. Tries Camera.main, then looks for a camera
+        /// named "Main Camera" or "MainCamera", and finally falls back to the first available camera.
+        /// If no cameras are available, logs a warning and returns null.
+        /// </summary>
+        private static Camera EnsureMainCamera()
+        {
+            if (MainCamera) 
+                return MainCamera;
+
+            if (IsValidCam(Camera.main))
+                return MainCamera;
+
+            ExplorerCore.LogWarning("No Camera.main found, trying to find a camera named 'Main Camera' or 'MainCamera'...");
+            var namedCam = Camera.allCameras.FirstOrDefault(c => c.name is "Main Camera" or "MainCamera");
+            if (IsValidCam(namedCam))
+                return MainCamera;
+
+            ExplorerCore.LogWarning("No camera named 'Main Camera' or 'MainCamera' found, using the first camera created...");
+            var fallbackCam = Camera.allCameras.FirstOrDefault();
+            if (IsValidCam(fallbackCam))
+                return MainCamera;
+
+            // If we reach here, no cameras were found at all.
+            ExplorerCore.LogWarning("No valid cameras found!");
+            return null;
+        }
 
         public override void UpdateMouseInspect(Vector2 mousePos)
         {
-            if (!MainCamera)
-                MainCamera = Camera.main;
-            if (!MainCamera)
+            // Attempt to ensure camera each time UpdateMouseInspect is called
+            // in case something changed or wasn't set initially.
+            if (!EnsureMainCamera())
             {
                 ExplorerCore.LogWarning("No Main Camera was found, unable to inspect world!");
                 MouseInspector.Instance.StopInspect();
@@ -68,8 +95,8 @@
             if (obj != lastHitObject)
             {
                 lastHitObject = obj;
-                MouseInspector.Instance.objNameLabel.text = $"<b>Click to Inspect:</b> <color=cyan>{obj.name}</color>";
-                MouseInspector.Instance.objPathLabel.text = $"Path: {obj.transform.GetTransformPath(true)}";
+                MouseInspector.Instance.UpdateObjectNameLabel($"<b>Click to Inspect:</b> <color=cyan>{obj.name}</color>");
+                MouseInspector.Instance.UpdateObjectPathLabel($"Path: {obj.transform.GetTransformPath(true)}");
             }
         }
 
