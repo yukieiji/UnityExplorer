@@ -30,7 +30,7 @@ namespace UnityExplorer.Inspectors
             MouseInspectMode.World => worldInspector,
             _ => null,
         };
-
+        
         private static Vector3 lastMousePos;
 
         // UIPanel
@@ -44,10 +44,11 @@ namespace UnityExplorer.Inspectors
         public override Vector2 DefaultAnchorMax => Vector2.zero;
 
         public override bool CanDragAndResize => false;
-
-        internal Text objNameLabel;
-        internal Text objPathLabel;
-        internal Text mousePosLabel;
+        
+        private Text inspectorLabelTitle;
+        private Text objNameLabel;
+        private Text objPathLabel;
+        private Text mousePosLabel;
 
         public MouseInspector(UIBase owner) : base(owner)
         {
@@ -121,6 +122,45 @@ namespace UnityExplorer.Inspectors
 
             return Inspecting;
         }
+        
+        /// <summary>
+        /// Updates the title text in the inspector UI, if the inspector title label is assigned.
+        /// </summary>
+        /// <param name="title">The new title text to display in the inspector.</param>
+        internal void UpdateInspectorTitle(string title)
+        {
+            // Unity null check - if inspectorLabelTitle is assigned, update its text.
+            if (inspectorLabelTitle)
+            {
+                inspectorLabelTitle.text = title;
+            }
+        }
+
+        /// <summary>
+        /// Updates the object name label in the inspector UI, if the label is assigned.
+        /// </summary>
+        /// <param name="name">The new object name to display.</param>
+        internal void UpdateObjectNameLabel(string name)
+        {
+            // Unity null check - if objNameLabel is assigned, update its text.
+            if (objNameLabel)
+            {
+                objNameLabel.text = name;
+            }
+        }
+
+        /// <summary>
+        /// Updates the object path label in the inspector UI, if the label is assigned.
+        /// </summary>
+        /// <param name="path">The new object path to display.</param>
+        internal void UpdateObjectPathLabel(string path)
+        {
+            // Unity null check - if objPathLabel is assigned, update its text.
+            if (objPathLabel)
+            {
+                objPathLabel.text = path;
+            }
+        }
 
         public void UpdateInspect()
         {
@@ -181,7 +221,6 @@ namespace UnityExplorer.Inspectors
             Rect.pivot = new Vector2(0.5f, 1);
             Rect.sizeDelta = new Vector2(700, 150);
         }
-
         protected override void ConstructPanelContent()
         {
             // hide title bar
@@ -192,12 +231,11 @@ namespace UnityExplorer.Inspectors
             UIFactory.SetLayoutElement(inspectContent, flexibleWidth: 9999, flexibleHeight: 9999);
 
             // Title text
-
-            Text title = UIFactory.CreateLabel(inspectContent,
+            inspectorLabelTitle = UIFactory.CreateLabel(inspectContent,
                 "InspectLabel",
-                "<b>Mouse Inspector</b> (press <b>ESC</b> to cancel)",
+                "",
                 TextAnchor.MiddleCenter);
-            UIFactory.SetLayoutElement(title.gameObject, flexibleWidth: 9999);
+            UIFactory.SetLayoutElement(inspectorLabelTitle.gameObject, flexibleWidth: 9999);
 
             mousePosLabel = UIFactory.CreateLabel(inspectContent, "MousePosLabel", "Mouse Position:", TextAnchor.MiddleCenter);
 
