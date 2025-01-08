@@ -29,6 +29,12 @@ namespace UnityExplorer.Config
         public static ConfigElement<string> CSConsole_Assembly_Blacklist;
         public static ConfigElement<string> Reflection_Signature_Blacklist;
 
+        public static ConfigElement<KeyCode> TIME_SCALE_TOGGLE;
+        public static ConfigElement<KeyCode> LOCK_TIME_SCALE_TO_ZERO;
+        public static ConfigElement<KeyCode> LOCK_TIME_SCALE_TO_NORMAL;
+        public static ConfigElement<KeyCode> LOCK_TIME_SCALE_TO_HALF;
+        public static ConfigElement<KeyCode> LOCK_TIME_SCALE_TO_DOUBLE;
+
         // internal configs
         internal static InternalConfigHandler InternalHandler { get; private set; }
         internal static readonly Dictionary<UIManager.Panels, ConfigElement<string>> PanelSaveData = new();
@@ -134,7 +140,7 @@ namespace UnityExplorer.Config
                 "Optional keybind to begin a UI-mode Mouse Inspect.",
                 KeyCode.None);
 
-            CSConsole_Assembly_Blacklist = new("CSharp Console Assembly Blacklist", 
+            CSConsole_Assembly_Blacklist = new("CSharp Console Assembly Blacklist",
                 "Use this to blacklist Assembly names from being referenced by the C# Console. Requires a Reset of the C# Console.\n" +
                 "Separate each Assembly with a semicolon ';'." +
                 "For example, to blacklist Assembly-CSharp, you would add 'Assembly-CSharp;'",
@@ -145,6 +151,22 @@ namespace UnityExplorer.Config
                 "Seperate signatures with a semicolon ';'.\r\n" +
                 "For example, to blacklist Camera.main, you would add 'UnityEngine.Camera.main;'",
                 "");
+
+            TIME_SCALE_TOGGLE = new("TimeScale Toggle",
+                "Shortcut key for locking/unlocking TimeScale",
+                KeyCode.None);
+            LOCK_TIME_SCALE_TO_ZERO = new("Pause Keybind",
+                "Shortcut key for setting TimeScale to 0.0",
+                KeyCode.None);
+            LOCK_TIME_SCALE_TO_NORMAL = new("Playback Keybind",
+                "Shortcut key for setting TimeScale to 1.0",
+                KeyCode.None);
+            LOCK_TIME_SCALE_TO_HALF = new("Speed-Down Keybind",
+                "Shortcut key for setting TimeScale to half",
+                KeyCode.None);
+            LOCK_TIME_SCALE_TO_DOUBLE = new("Speed-Up Keybind",
+                "Shortcut key for setting TimeScale to double",
+                KeyCode.None);
         }
     }
 }
