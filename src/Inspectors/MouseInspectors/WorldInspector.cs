@@ -88,7 +88,12 @@ public class WorldInspector : MouseInspectorBase
         return null;
     }
 
-    private static bool TryGetValidMainCamera([NotNullWhen(true)] out Camera? camera)
+    private static bool TryGetValidMainCamera(
+#if NETFRAMEWORK
+        out Camera camera)
+#else
+        [NotNullWhen(true)] out Camera? camera)
+#endif
     {
         camera = Camera.main;
         if (camera != null)
