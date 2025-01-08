@@ -8,6 +8,8 @@ using IL2CPPUtils = UnhollowerBaseLib.UnhollowerUtils;
 using IL2CPPUtils = Il2CppInterop.Common.Il2CppInteropUtils;
 #endif
 
+#nullable enable
+
 namespace UnityExplorer.UI.Widgets;
 
 internal class TimeScaleWidget
@@ -21,11 +23,11 @@ internal class TimeScaleWidget
         InitPatch();
     }
 
-    static TimeScaleWidget Instance;
+    static TimeScaleWidget? Instance;
 
-    ButtonRef lockBtn;
+    ButtonRef? lockBtn;
     bool locked;
-    InputFieldRef timeInput;
+    InputFieldRef? timeInput;
     float desiredTime;
     bool settingTimeScale;
 
@@ -35,8 +37,11 @@ internal class TimeScaleWidget
         if (locked)
             SetTimeScale(desiredTime);
 
-        if (!timeInput.Component.isFocused)
+        if (timeInput != null &&
+            !timeInput.Component.isFocused)
+        {
             timeInput.Text = Time.timeScale.ToString("F2");
+        }
     }
 
     void SetTimeScale(float time)
@@ -59,6 +64,12 @@ internal class TimeScaleWidget
 
     void OnPauseButtonClicked()
     {
+        if (timeInput == null ||
+            lockBtn == null)
+        {
+            return;
+        }
+
         OnTimeInputEndEdit(timeInput.Text);
 
         locked = !locked;
@@ -110,6 +121,6 @@ internal class TimeScaleWidget
 
     static bool Prefix_Time_set_timeScale()
     {
-        return !Instance.locked || Instance.settingTimeScale;
+        return Instance == null || !Instance.locked || Instance.settingTimeScale;
     }
 }
