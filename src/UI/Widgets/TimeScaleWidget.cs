@@ -23,19 +23,22 @@ internal class TimeScaleWidget
         InitPatch();
     }
 
+    public float DesiredTime { get; private set; }
+
     static TimeScaleWidget? Instance;
 
     ButtonRef? lockBtn;
     bool locked;
     InputFieldRef? timeInput;
-    float desiredTime;
     bool settingTimeScale;
 
     public void Update()
     {
         // Fallback in case Time.timeScale patch failed for whatever reason
         if (locked)
-            SetTimeScale(desiredTime);
+        {
+            UpdateTimeScale();
+        }
 
         if (timeInput != null &&
             !timeInput.Component.isFocused)
@@ -44,11 +47,24 @@ internal class TimeScaleWidget
         }
     }
 
-    void SetTimeScale(float time)
+    public void LockTo(float timeScale)
+    {
+        locked = true;
+        SetTimeScale(timeScale);
+        UpdateUi();
+    }
+
+    void UpdateTimeScale()
     {
         settingTimeScale = true;
-        Time.timeScale = time;
+        Time.timeScale = DesiredTime;
         settingTimeScale = false;
+    }
+
+    void SetTimeScale(float floatVal)
+    {
+        DesiredTime = floatVal;
+        UpdateTimeScale();
     }
 
     // UI event listeners
@@ -58,14 +74,12 @@ internal class TimeScaleWidget
         if (float.TryParse(val, out float f))
         {
             SetTimeScale(f);
-            desiredTime = f;
         }
     }
 
     void OnPauseButtonClicked()
     {
-        if (timeInput == null ||
-            lockBtn == null)
+        if (timeInput == null)
         {
             return;
         }
@@ -73,6 +87,16 @@ internal class TimeScaleWidget
         OnTimeInputEndEdit(timeInput.Text);
 
         locked = !locked;
+
+        UpdateUi();
+    }
+
+    void UpdateUi()
+    {
+        if (lockBtn == null)
+        {
+            return;
+        }
 
         Color color = locked ? new Color(0.3f, 0.3f, 0.2f) : new Color(0.2f, 0.2f, 0.2f);
         RuntimeHelper.SetColorBlock(lockBtn.Component, color, color * 1.2f, color * 0.7f);
@@ -120,7 +144,5 @@ internal class TimeScaleWidget
     }
 
     static bool Prefix_Time_set_timeScale()
-    {
-        return Instance == null || !Instance.locked || Instance.settingTimeScale;
-    }
+        => Instance == null || !Instance.locked || Instance.settingTimeScale;
 }
