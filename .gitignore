@@ -352,5 +352,5 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 
-UnityEditorPackage/Runtime/UniverseLib.Mono.dll
-UnityEditorPackage/Runtime/UnityExplorer.STANDALONE.Mono.dll
+/UnityEditorPackage/Runtime/UniverseLib.Mono.dll
+/UnityEditorPackage/Runtime/UnityExplorer.STANDALONE.Mono.dll
