@@ -7,12 +7,14 @@ global using UnityEngine;
 global using UnityEngine.UI;
 global using UniverseLib;
 global using UniverseLib.Utility;
+
 using UnityExplorer.Config;
 using UnityExplorer.ObjectExplorer;
 using UnityExplorer.Runtime;
 using UnityExplorer.UI;
 using UnityExplorer.UI.Panels;
-using UniverseLib.Input;
+
+using HarmonyPatch = HarmonyLib.Harmony;
 
 namespace UnityExplorer;
 
@@ -27,7 +29,7 @@ public static class ExplorerCore
     public static string ExplorerFolder => Path.Combine(Loader.ExplorerFolderDestination, Loader.ExplorerFolderName);
     public const string DEFAULT_EXPLORER_FOLDER_NAME = "sinai-dev-UnityExplorer";
 
-    public static HarmonyLib.Harmony Harmony { get; } = new HarmonyLib.Harmony(GUID);
+    public static HarmonyPatch Harmony { get; } = new HarmonyPatch(GUID);
 
     /// <summary>
     /// Initialize UnityExplorer with the provided Loader implementation.
@@ -170,7 +172,9 @@ public static class ExplorerCore
 
         // Copy each file into it's new directory.
         foreach (FileInfo fi in source.GetFiles())
+        {
             fi.MoveTo(Path.Combine(target.ToString(), fi.Name));
+        }
 
         // Copy each subdirectory using recursion.
         foreach (DirectoryInfo diSourceSubDir in source.GetDirectories())
