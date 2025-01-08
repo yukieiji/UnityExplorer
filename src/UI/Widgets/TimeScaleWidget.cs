@@ -119,10 +119,14 @@ internal class TimeScaleWidget
 
         try
         {
-            MethodInfo? target = typeof(Time).GetProperty("timeScale")?.GetSetMethod();
+            var target = typeof(Time).GetProperty("timeScale")?.GetSetMethod();
+            if (target == null)
+            {
+                return;
+            }
 #if CPP
-            if (target == null ||
-                IL2CPPUtils.GetIl2CppMethodInfoPointerFieldForGeneratedMethod(target) == null)
+            var fieldInfo = IL2CPPUtils.GetIl2CppMethodInfoPointerFieldForGeneratedMethod(target);
+            if (fieldInfo == null)
             {
                 return;
             }
