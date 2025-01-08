@@ -9,7 +9,7 @@
     <AllowedReferenceRelatedFileExtensions>none</AllowedReferenceRelatedFileExtensions>
     <DebugSymbols>false</DebugSymbols>
     <LangVersion>latest</LangVersion>
-    <WarningLevel>7</WarningLevel>
+    <WarningLevel>8</WarningLevel>
     <RootNamespace>UnityExplorer</RootNamespace>
     <!-- MSBuildの.NET8対応に伴って勝手にバージョンにハッシュ値入れられてBepInExのロード不具合が出たため、明示的に無効化しておく -->
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
