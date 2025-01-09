@@ -98,7 +98,7 @@ namespace UnityExplorer.UI
             new MouseInspector(MouseInspector.inspectorUIBase);
 
             // Call some initialize methods
-            Notification.Init();
+            Notification.Init(UIRoot);
             ConsoleController.Init();
 
             // Failsafe fix, in some games all dropdowns displayed values are blank on startup for some reason.
