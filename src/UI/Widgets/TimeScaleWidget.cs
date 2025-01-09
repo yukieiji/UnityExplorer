@@ -54,8 +54,7 @@ internal class TimeScaleWidget
             UpdateTimeScale();
         }
 
-        if (timeInput != null &&
-            !timeInput.Component.isFocused)
+        if (!timeInput.Component.isFocused)
         {
             timeInput.Text = Time.timeScale.ToString("F2");
         }
@@ -70,11 +69,6 @@ internal class TimeScaleWidget
 
     public void OnPauseButtonClicked()
     {
-        if (timeInput == null)
-        {
-            return;
-        }
-
         OnTimeInputEndEdit(timeInput.Text);
 
         locked = !locked;
