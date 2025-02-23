@@ -49,6 +49,13 @@ body:
       description: Please tell us the name of the game. If it's a personal or private project, just let us know the Unity version.
     validations:
       required: true
+  - type: checkboxes
+    id: allowmod
+    attributes:
+      label: Does this game support mods?
+      description: If not, There is no possibility that I can do.
+      options:
+        - label: Yes support!!
   - type: textarea
     id: what-happened
     attributes:
