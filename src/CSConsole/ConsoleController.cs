@@ -36,8 +36,8 @@ namespace UnityExplorer.CSConsole
         static string previousInput;
         static int previousContentLength = 0;
 
-        static readonly string[] DefaultUsing = new string[]
-        {
+        static readonly string[] DefaultUsing = [
+
             "System",
             "System.Linq",
             "System.Text",
@@ -47,10 +47,17 @@ namespace UnityExplorer.CSConsole
             "UnityEngine",
             "UniverseLib",
 #if CPP
+#if INTEROP
+            "Il2CppInterop.Runtime",
+            "Il2CppInterop.Runtime.Attributes",
+            "Il2CppInterop.Runtime.Injection",
+            "Il2CppInterop.Runtime.InteropTypes.Arrays",
+#else
             "UnhollowerBaseLib",
             "UnhollowerRuntimeLib",
 #endif
-        };
+#endif
+        ];
 
         const int CSCONSOLE_LINEHEIGHT = 18;
 
@@ -432,7 +439,7 @@ namespace UnityExplorer.CSConsole
                 // depending on which one we are not at.
                 if (LastCaretPosition == indentedStart)
                     SetCaretPosition(thisline.startCharIdx);
-                else 
+                else
                     SetCaretPosition(indentedStart);
             }
             else
