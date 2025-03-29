@@ -200,7 +200,7 @@ public static class ConsoleController
             {
                 // The compiled code was not REPL, so it was a using directive or it defined classes.
 
-                string output = Evaluator._textWriter.ToString();
+                string output = Evaluator.ToString();
                 string[] outputSplit = output.Split('\n');
                 if (outputSplit.Length >= 2)
                     output = outputSplit[outputSplit.Length - 2];
