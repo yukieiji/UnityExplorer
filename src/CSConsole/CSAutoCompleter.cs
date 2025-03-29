@@ -20,8 +20,7 @@ namespace UnityExplorer.CSConsole
             AutoCompleteModal.Instance.ReleaseOwnership(this);
         }
 
-        private readonly HashSet<char> delimiters = new()
-        {
+        private readonly HashSet<char> delimiters = [
             '{',
             '}',
             ',',
@@ -36,7 +35,7 @@ namespace UnityExplorer.CSConsole
             '|',
             '&',
             '?'
-        };
+        ];
 
         private readonly List<Suggestion> suggestions = new();
 
