@@ -6,33 +6,47 @@ using UnityExplorer.UI.Panels;
 using UniverseLib.Input;
 using UniverseLib.UI.Models;
 
+#nullable enable
+
 namespace UnityExplorer.CSConsole;
 
-public static class ConsoleController
+public class ConsoleController
 {
-    public static ConsoleScriptEvaluator Evaluator { get; } = new ConsoleScriptEvaluator();
-    public static LexerBuilder Lexer { get; private set; }
-    public static CSAutoCompleter Completer { get; private set; }
+    private readonly ConsoleScriptEvaluator _evaluator;
+    private readonly LexerBuilder _lexer;
+    private readonly CSAutoCompleter _completer;
+    private readonly HashSet<string> usingDirectives = [];
 
-    public static bool SRENotSupported { get; private set; }
-    public static int LastCaretPosition { get; private set; }
-    public static float DefaultInputFieldAlpha { get; set; }
+    private bool sreNotSupported { get; set; }
+    private int lastCaretPosition { get;  set; }
 
-    public static bool EnableCtrlRShortcut { get; private set; } = true;
-    public static bool EnableAutoIndent { get; private set; } = true;
-    public static bool EnableSuggestions { get; private set; } = true;
+    public static float DefaultInputFieldAlpha
+    {
+        set
+        {
+            if (_instance is null)
+            {
+                return;
+            }
+            _instance.defaultInputFieldAlpha = value;
+        }
+    }
+    private float defaultInputFieldAlpha;
 
-    public static CSConsolePanel Panel => UIManager.GetPanel<CSConsolePanel>(UIManager.Panels.CSConsole);
-    public static InputFieldRef Input => Panel.Input;
+    private bool enableCtrlRShortcut { get; set; } = true;
+    private bool enableAutoIndent { get; set; } = true;
+    private bool enableSuggestions { get; set; } = true;
+
+    private float timeOfLastCtrlR;
+
+    private bool settingCaretCoroutine;
+    private string previousInput = "";
+    private int previousContentLength = 0;
+
+    private static CSConsolePanel _panel => UIManager.GetPanel<CSConsolePanel>(UIManager.Panels.CSConsole);
+    public static InputFieldRef Input => _panel.Input;
 
     public static string ScriptsFolder => Path.Combine(ExplorerCore.ExplorerFolder, "Scripts");
-
-    static HashSet<string> usingDirectives;
-    static float timeOfLastCtrlR;
-
-    static bool settingCaretCoroutine;
-    static string previousInput;
-    static int previousContentLength = 0;
 
     static readonly string[] DefaultUsing = [
 
@@ -59,13 +73,20 @@ public static class ConsoleController
 
     const int CSCONSOLE_LINEHEIGHT = 18;
 
-    public static void Init()
+    private static ConsoleController? _instance { get; set; }
+
+    public ConsoleController()
     {
+        _evaluator = new ConsoleScriptEvaluator();
+        // Setup console
+        _lexer = new LexerBuilder();
+        _completer = new CSAutoCompleter();
+
         try
         {
             ResetConsole(false);
             // ensure the compiler is supported (if this fails then SRE is probably stripped)
-            Evaluator.Compile("0 == 0");
+            _evaluator.Compile("0 == 0");
         }
         catch (Exception ex)
         {
@@ -73,27 +94,25 @@ public static class ConsoleController
             return;
         }
 
-        // Setup console
-        Lexer = new LexerBuilder();
-        Completer = new CSAutoCompleter();
-
         SetupHelpInteraction();
 
-        Panel.OnInputChanged += OnInputChanged;
-        Panel.InputScroller.OnScroll += OnInputScrolled;
-        Panel.OnCompileClicked += Evaluate;
-        Panel.OnResetClicked += ResetConsole;
-        Panel.OnHelpDropdownChanged += HelpSelected;
-        Panel.OnAutoIndentToggled += OnToggleAutoIndent;
-        Panel.OnCtrlRToggled += OnToggleCtrlRShortcut;
-        Panel.OnSuggestionsToggled += OnToggleSuggestions;
-        Panel.OnPanelResized += OnInputScrolled;
+        _panel.OnInputChanged += OnInputChanged;
+        _panel.InputScroller.OnScroll += OnInputScrolled;
+        _panel.OnCompileClicked += Evaluate;
+        _panel.OnResetClicked += ResetConsole;
+        _panel.OnHelpDropdownChanged += HelpSelected;
+        _panel.OnAutoIndentToggled += OnToggleAutoIndent;
+        _panel.OnCtrlRToggled += OnToggleCtrlRShortcut;
+        _panel.OnSuggestionsToggled += OnToggleSuggestions;
+        _panel.OnPanelResized += OnInputScrolled;
 
         // Run startup script
         try
         {
             if (!Directory.Exists(ScriptsFolder))
+            {
                 Directory.CreateDirectory(ScriptsFolder);
+            }
 
             string startupPath = Path.Combine(ScriptsFolder, "startup.cs");
             if (File.Exists(startupPath))
@@ -110,27 +129,45 @@ public static class ConsoleController
         }
     }
 
+    public static void Init()
+    {
+        _instance = new ConsoleController();
+    }
+
+    public static string[]? GetCompletions(string inputs, out string prefix)
+    {
+        prefix = "";
+        return _instance?._evaluator.GetCompletions(inputs, out prefix);
+    }
+    public static void Update()
+        => _instance?.UpdateImp();
 
     #region Evaluating
 
-    public static void ResetConsole() => ResetConsole(true);
+    public void ResetConsole() => ResetConsole(true);
 
-    public static void ResetConsole(bool logSuccess = true)
+    public void ResetConsole(bool logSuccess = true)
     {
-        if (SRENotSupported)
+        if (sreNotSupported)
+        {
             return;
+        }
 
-        Evaluator.Recreate();
+        _evaluator.Recreate();
 
-        usingDirectives = new HashSet<string>();
+        usingDirectives.Clear();
         foreach (string use in DefaultUsing)
+        {
             AddUsing(use);
+        }
 
         if (logSuccess)
+        {
             ExplorerCore.Log($"C# Console reset");//. Using directives:\r\n{Evaluator.GetUsing()}");
+        }
     }
 
-    public static void AddUsing(string assemblyName)
+    public void AddUsing(string assemblyName)
     {
         if (!usingDirectives.Contains(assemblyName))
         {
@@ -139,38 +176,44 @@ public static class ConsoleController
         }
     }
 
-    public static void Evaluate()
+    public void Evaluate()
     {
-        if (SRENotSupported)
+        if (sreNotSupported)
+        {
             return;
+        }
 
         Evaluate(Input.Text);
     }
 
-    public static void Evaluate(string input, bool supressLog = false)
+    public void Evaluate(string input, bool supressLog = false)
     {
-        if (SRENotSupported)
+        if (sreNotSupported)
             return;
 
-        Evaluator.Initialize();
+        _evaluator.Initialize();
 
         try
         {
             // Compile the code. If it returned a CompiledMethod, it is REPL.
-            CompiledMethod repl = Evaluator.Compile(input);
+            CompiledMethod? repl = _evaluator.Compile(input);
 
             if (repl != null)
             {
                 // Valid REPL, we have a delegate to the evaluation.
                 try
                 {
-                    object ret = null;
+                    object? ret = null;
                     repl.Invoke(ref ret);
-                    string result = ret?.ToString();
+                    string? result = ret?.ToString();
                     if (!string.IsNullOrEmpty(result))
+                    {
                         ExplorerCore.Log($"Invoked REPL, result: {ret}");
+                    }
                     else
+                    {
                         ExplorerCore.Log($"Invoked REPL (no return value)");
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -181,28 +224,44 @@ public static class ConsoleController
             {
                 // The compiled code was not REPL, so it was a using directive or it defined classes.
 
-                string output = Evaluator.ToString();
+                string? output = _evaluator.ToString();
+                if (output == null ||
+                    string.IsNullOrEmpty(output))
+                {
+                    return;
+                }
+
                 string[] outputSplit = output.Split('\n');
                 if (outputSplit.Length >= 2)
+                {
                     output = outputSplit[outputSplit.Length - 2];
+                }
 
-                Evaluator.ClearOutput();
+                _evaluator.ClearOutput();
 
-                if (ScriptEvaluator._reportPrinter.ErrorsCount > 0)
+                if (ScriptEvaluator._reportPrinter?.ErrorsCount > 0)
+                {
                     throw new FormatException($"Unable to compile the code. Evaluator's last output was:\r\n{output}");
+                }
                 else if (!supressLog)
+                {
                     ExplorerCore.Log($"Code compiled without errors.");
+                }
             }
         }
         catch (FormatException fex)
         {
             if (!supressLog)
+            {
                 ExplorerCore.LogWarning(fex.Message);
+            }
         }
         catch (Exception ex)
         {
             if (!supressLog)
+            {
                 ExplorerCore.LogWarning(ex);
+            }
         }
     }
 
@@ -211,56 +270,66 @@ public static class ConsoleController
 
     #region Update loop and event listeners
 
-    public static void Update()
+    public void UpdateImp()
     {
-        if (SRENotSupported)
+        if (sreNotSupported)
+        {
             return;
+        }
 
         if (!InputManager.GetKey(KeyCode.LeftControl) && !InputManager.GetKey(KeyCode.RightControl))
         {
             if (InputManager.GetKeyDown(KeyCode.Home))
+            {
                 JumpToStartOrEndOfLine(true);
+            }
             else if (InputManager.GetKeyDown(KeyCode.End))
+            {
                 JumpToStartOrEndOfLine(false);
+            }
         }
 
         UpdateCaret(out bool caretMoved);
 
-        if (!settingCaretCoroutine && EnableSuggestions)
+        if (!settingCaretCoroutine && enableSuggestions)
         {
-            if (AutoCompleteModal.CheckEscape(Completer))
+            if (AutoCompleteModal.CheckEscape(_completer))
             {
                 OnAutocompleteEscaped();
                 return;
             }
 
             if (caretMoved)
-                AutoCompleteModal.Instance.ReleaseOwnership(Completer);
+            {
+                AutoCompleteModal.Instance.ReleaseOwnership(_completer);
+            }
         }
 
-        if (EnableCtrlRShortcut
+        if (enableCtrlRShortcut
             && (InputManager.GetKey(KeyCode.LeftControl) || InputManager.GetKey(KeyCode.RightControl))
             && InputManager.GetKeyDown(KeyCode.R)
             && timeOfLastCtrlR.OccuredEarlierThanDefault())
         {
             timeOfLastCtrlR = Time.realtimeSinceStartup;
-            Evaluate(Panel.Input.Text);
+            Evaluate(_panel.Input.Text);
         }
     }
 
-    static void OnInputScrolled() => HighlightVisibleInput(out _);
+    private void OnInputScrolled() => HighlightVisibleInput(out _);
 
-    static void OnInputChanged(string value)
+    private void OnInputChanged(string value)
     {
-        if (SRENotSupported)
+        if (sreNotSupported)
+        {
             return;
+        }
 
         // prevent escape wiping input
         if (InputManager.GetKeyDown(KeyCode.Escape))
         {
             Input.Text = previousInput;
 
-            if (EnableSuggestions && AutoCompleteModal.CheckEscape(Completer))
+            if (enableSuggestions && AutoCompleteModal.CheckEscape(_completer))
                 OnAutocompleteEscaped();
 
             return;
@@ -268,44 +337,45 @@ public static class ConsoleController
 
         previousInput = value;
 
-        if (EnableSuggestions && AutoCompleteModal.CheckEnter(Completer))
-            OnAutocompleteEnter();
-
-        if (!settingCaretCoroutine)
+        if (enableSuggestions && AutoCompleteModal.CheckEnter(_completer))
         {
-            if (EnableAutoIndent)
-                DoAutoIndent();
+            OnAutocompleteEnter();
+        }
+
+        if (!settingCaretCoroutine && enableAutoIndent)
+        {
+            DoAutoIndent();
         }
 
         HighlightVisibleInput(out bool inStringOrComment);
 
         if (!settingCaretCoroutine)
         {
-            if (EnableSuggestions)
+            if (enableSuggestions)
             {
                 if (inStringOrComment)
-                    AutoCompleteModal.Instance.ReleaseOwnership(Completer);
+                    AutoCompleteModal.Instance.ReleaseOwnership(_completer);
                 else
-                    Completer.CheckAutocompletes();
+                    _completer.CheckAutocompletes();
             }
         }
 
         UpdateCaret(out _);
     }
 
-    static void OnToggleAutoIndent(bool value)
+    private void OnToggleAutoIndent(bool value)
     {
-        EnableAutoIndent = value;
+        enableAutoIndent = value;
     }
 
-    static void OnToggleCtrlRShortcut(bool value)
+    private void OnToggleCtrlRShortcut(bool value)
     {
-        EnableCtrlRShortcut = value;
+        enableCtrlRShortcut = value;
     }
 
-    static void OnToggleSuggestions(bool value)
+    private void OnToggleSuggestions(bool value)
     {
-        EnableSuggestions = value;
+        enableSuggestions = value;
     }
 
     #endregion
@@ -313,42 +383,48 @@ public static class ConsoleController
 
     #region Caret position
 
-    static void UpdateCaret(out bool caretMoved)
+    private void UpdateCaret(out bool caretMoved)
     {
-        int prevCaret = LastCaretPosition;
+        int prevCaret = lastCaretPosition;
         caretMoved = false;
 
         // Override up/down arrow movement when autocompleting
-        if (EnableSuggestions && AutoCompleteModal.CheckNavigation(Completer))
+        if (enableSuggestions && AutoCompleteModal.CheckNavigation(_completer))
         {
-            Input.Component.caretPosition = LastCaretPosition;
+            Input.Component.caretPosition = lastCaretPosition;
             return;
         }
 
         if (Input.Component.isFocused)
         {
-            LastCaretPosition = Input.Component.caretPosition;
-            caretMoved = LastCaretPosition != prevCaret;
+            lastCaretPosition = Input.Component.caretPosition;
+            caretMoved = lastCaretPosition != prevCaret;
         }
 
         if (Input.Text.Length == 0)
+        {
             return;
+        }
 
         // If caret moved, ensure caret is visible in the viewport
         if (caretMoved)
         {
-            UICharInfo charInfo = Input.TextGenerator.characters[LastCaretPosition];
+            UICharInfo charInfo = Input.TextGenerator.characters[lastCaretPosition];
             float charTop = charInfo.cursorPos.y;
             float charBot = charTop - CSCONSOLE_LINEHEIGHT;
 
             float viewportMin = Input.Transform.rect.height - Input.Transform.anchoredPosition.y - (Input.Transform.rect.height * 0.5f);
-            float viewportMax = viewportMin - Panel.InputScroller.ViewportRect.rect.height;
+            float viewportMax = viewportMin - _panel.InputScroller.ViewportRect.rect.height;
 
-            float diff = 0f;
+            float diff = 0;
             if (charTop > viewportMin)
+            {
                 diff = charTop - viewportMin;
+            }
             else if (charBot < viewportMax)
+            {
                 diff = charBot - viewportMax;
+            }
 
             if (Math.Abs(diff) > 1)
             {
@@ -358,7 +434,7 @@ public static class ConsoleController
         }
     }
 
-    public static void SetCaretPosition(int caretPosition)
+    public void SetCaretPosition(int caretPosition)
     {
         Input.Component.caretPosition = caretPosition;
 
@@ -369,7 +445,7 @@ public static class ConsoleController
         RuntimeHelper.StartCoroutine(DoSetCaretCoroutine(caretPosition));
     }
 
-    static IEnumerator DoSetCaretCoroutine(int caretPosition)
+    private IEnumerator DoSetCaretCoroutine(int caretPosition)
     {
         Color color = Input.Component.selectionColor;
         color.a = 0f;
@@ -382,9 +458,9 @@ public static class ConsoleController
 
         Input.Component.caretPosition = caretPosition;
         Input.Component.selectionFocusPosition = caretPosition;
-        LastCaretPosition = Input.Component.caretPosition;
+        lastCaretPosition = Input.Component.caretPosition;
 
-        color.a = DefaultInputFieldAlpha;
+        color.a = defaultInputFieldAlpha;
         Input.Component.selectionColor = color;
 
         Input.Component.readOnly = false;
@@ -392,7 +468,7 @@ public static class ConsoleController
     }
 
     // For Home and End keys
-    static void JumpToStartOrEndOfLine(bool toStart)
+    private void JumpToStartOrEndOfLine(bool toStart)
     {
         // Determine the current and next line
         UILineInfo thisline = default;
@@ -401,7 +477,7 @@ public static class ConsoleController
         {
             UILineInfo line = Input.Component.cachedInputTextGenerator.lines[i];
 
-            if (line.startCharIdx > LastCaretPosition)
+            if (line.startCharIdx > lastCaretPosition)
             {
                 nextLine = line;
                 break;
@@ -415,22 +491,23 @@ public static class ConsoleController
             int endOfLine = nextLine == null ? Input.Text.Length : nextLine.Value.startCharIdx;
             int indentedStart = thisline.startCharIdx;
             while (indentedStart < endOfLine - 1 && char.IsWhiteSpace(Input.Text[indentedStart]))
+            {
                 indentedStart++;
+            }
 
             // Jump to either the true start or the non-whitespace position,
             // depending on which one we are not at.
-            if (LastCaretPosition == indentedStart)
-                SetCaretPosition(thisline.startCharIdx);
-            else
-                SetCaretPosition(indentedStart);
+            SetCaretPosition(
+                lastCaretPosition == indentedStart ?
+                thisline.startCharIdx : indentedStart);
         }
         else
         {
             // If there is no next line, jump to the end of this line (+1, to the invisible next character position)
-            if (nextLine == null)
-                SetCaretPosition(Input.Text.Length);
-            else // jump to the next line start index - 1, ie. end of this line
-                SetCaretPosition(nextLine.Value.startCharIdx - 1);
+            // jump to the next line start index - 1, ie. end of this line
+            SetCaretPosition(
+                nextLine == null ?
+                Input.Text.Length : nextLine.Value.startCharIdx - 1);
         }
     }
 
@@ -439,13 +516,13 @@ public static class ConsoleController
 
     #region Lexer Highlighting
 
-    private static void HighlightVisibleInput(out bool inStringOrComment)
+    private void HighlightVisibleInput(out bool inStringOrComment)
     {
         inStringOrComment = false;
         if (string.IsNullOrEmpty(Input.Text))
         {
-            Panel.HighlightText.text = "";
-            Panel.LineNumberText.text = "1";
+            _panel.HighlightText.text = "";
+            _panel.LineNumberText.text = "1";
             return;
         }
 
@@ -457,17 +534,21 @@ public static class ConsoleController
         // the top and bottom position of the viewport in relation to the text height
         // they need the half-height adjustment to normalize against the 'line.topY' value.
         float viewportMin = Input.Transform.rect.height - Input.Transform.anchoredPosition.y - (Input.Transform.rect.height * 0.5f);
-        float viewportMax = viewportMin - Panel.InputScroller.ViewportRect.rect.height;
+        float viewportMax = viewportMin - _panel.InputScroller.ViewportRect.rect.height;
 
         for (int i = 0; i < Input.TextGenerator.lineCount; i++)
         {
             UILineInfo line = Input.TextGenerator.lines[i];
             // if not set the top line yet, and top of line is below the viewport top
             if (topLine == -1 && line.topY <= viewportMin)
+            {
                 topLine = i;
+            }
             // if bottom of line is below the viewport bottom
             if ((line.topY - line.height) >= viewportMax)
+            {
                 bottomLine = i;
+            }
         }
 
         topLine = Math.Max(0, topLine - 1);
@@ -481,7 +562,7 @@ public static class ConsoleController
 
         // Highlight the visible text with the LexerBuilder
 
-        Panel.HighlightText.text = Lexer.BuildHighlightedString(Input.Text, startIdx, endIdx, topLine, LastCaretPosition, out inStringOrComment);
+        _panel.HighlightText.text = _lexer.BuildHighlightedString(Input.Text, startIdx, endIdx, topLine, lastCaretPosition, out inStringOrComment);
 
         // Set the line numbers
 
@@ -490,7 +571,9 @@ public static class ConsoleController
         for (int i = 0; i < startIdx; i++)
         {
             if (LexerBuilder.IsNewLine(Input.Text[i]))
+            {
                 realStartLine++;
+            }
         }
         realStartLine++;
         char lastPrev = '\n';
@@ -499,13 +582,17 @@ public static class ConsoleController
 
         // append leading new lines for spacing (no point rendering line numbers we cant see)
         for (int i = 0; i < topLine; i++)
+        {
             sb.Append('\n');
+        }
 
         // append the displayed line numbers
         for (int i = topLine; i <= bottomLine; i++)
         {
             if (i > 0)
+            {
                 lastPrev = Input.Text[Input.TextGenerator.lines[i].startCharIdx - 1];
+            }
 
             // previous line ended with a newline character, this is an actual new line.
             if (LexerBuilder.IsNewLine(lastPrev))
@@ -517,9 +604,7 @@ public static class ConsoleController
             sb.Append('\n');
         }
 
-        Panel.LineNumberText.text = sb.ToString();
-
-        return;
+        _panel.LineNumberText.text = sb.ToString();
     }
 
     #endregion
@@ -528,29 +613,32 @@ public static class ConsoleController
     #region Autocompletes
 
     public static void InsertSuggestionAtCaret(string suggestion)
+        => _instance?.InsertSuggestionAtCaretImp(suggestion);
+
+    private void InsertSuggestionAtCaretImp(string suggestion)
     {
         settingCaretCoroutine = true;
-        Input.Text = Input.Text.Insert(LastCaretPosition, suggestion);
+        Input.Text = Input.Text.Insert(lastCaretPosition, suggestion);
 
-        SetCaretPosition(LastCaretPosition + suggestion.Length);
-        LastCaretPosition = Input.Component.caretPosition;
+        SetCaretPosition(lastCaretPosition + suggestion.Length);
+        lastCaretPosition = Input.Component.caretPosition;
     }
 
-    private static void OnAutocompleteEnter()
+    private void OnAutocompleteEnter()
     {
         // Remove the new line
         int lastIdx = Input.Component.caretPosition - 1;
         Input.Text = Input.Text.Remove(lastIdx, 1);
 
         // Use the selected suggestion
-        Input.Component.caretPosition = LastCaretPosition;
-        Completer.OnSuggestionClicked(AutoCompleteModal.SelectedSuggestion);
+        Input.Component.caretPosition = lastCaretPosition;
+        _completer.OnSuggestionClicked(AutoCompleteModal.SelectedSuggestion);
     }
 
-    private static void OnAutocompleteEscaped()
+    private void OnAutocompleteEscaped()
     {
-        AutoCompleteModal.Instance.ReleaseOwnership(Completer);
-        SetCaretPosition(LastCaretPosition);
+        AutoCompleteModal.Instance.ReleaseOwnership(_completer);
+        SetCaretPosition(lastCaretPosition);
     }
 
 
@@ -559,7 +647,7 @@ public static class ConsoleController
 
     #region Auto indenting
 
-    private static void DoAutoIndent()
+    private void DoAutoIndent()
     {
         if (Input.Text.Length > previousContentLength)
         {
@@ -568,9 +656,9 @@ public static class ConsoleController
             if (inc == 1)
             {
                 int caret = Input.Component.caretPosition;
-                Input.Text = Lexer.IndentCharacter(Input.Text, ref caret);
+                Input.Text = _lexer.IndentCharacter(Input.Text, ref caret);
                 Input.Component.caretPosition = caret;
-                LastCaretPosition = caret;
+                lastCaretPosition = caret;
             }
             else
             {
@@ -590,9 +678,9 @@ public static class ConsoleController
 
     #region "Help" interaction
 
-    private static void DisableConsole(Exception ex)
+    private void DisableConsole(Exception ex)
     {
-        SRENotSupported = true;
+        sreNotSupported = true;
         Input.Component.readOnly = true;
         Input.Component.textComponent.color = "5d8556".ToColor();
 
@@ -633,7 +721,7 @@ Doorstop example:
 
     public static void SetupHelpInteraction()
     {
-        Dropdown drop = Panel.HelpDropdown;
+        Dropdown drop = _panel.HelpDropdown;
 
         helpDict.Add("Help", "");
         helpDict.Add("Usings", HELP_USINGS);
@@ -642,19 +730,23 @@ Doorstop example:
         helpDict.Add("Coroutines", HELP_COROUTINES);
 
         foreach (KeyValuePair<string, string> opt in helpDict)
+        {
             drop.options.Add(new Dropdown.OptionData(opt.Key));
+        }
     }
 
     public static void HelpSelected(int index)
     {
         if (index == 0)
+        {
             return;
+        }
 
         KeyValuePair<string, string> helpText = helpDict.ElementAt(index);
 
         Input.Text = helpText.Value;
 
-        Panel.HelpDropdown.value = 0;
+        _panel.HelpDropdown.value = 0;
     }
 
 

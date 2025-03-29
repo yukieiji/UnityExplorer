@@ -79,7 +79,7 @@ namespace UnityExplorer.CSConsole
 
             // Get MCS completions
 
-            string[] evaluatorCompletions = ConsoleController.Evaluator.GetCompletions(input, out string prefix);
+            string[] evaluatorCompletions = ConsoleController.GetCompletions(input, out string prefix);
 
             if (evaluatorCompletions != null && evaluatorCompletions.Any())
             {
