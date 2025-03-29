@@ -349,14 +349,16 @@ public class ConsoleController
 
         HighlightVisibleInput(out bool inStringOrComment);
 
-        if (!settingCaretCoroutine)
+        if (!settingCaretCoroutine && enableSuggestions)
         {
-            if (enableSuggestions)
+            if (inStringOrComment)
             {
-                if (inStringOrComment)
-                    AutoCompleteModal.Instance.ReleaseOwnership(_completer);
-                else
-                    _completer.CheckAutocompletes();
+                AutoCompleteModal.Instance.ReleaseOwnership(_completer);
+            }
+            else
+            {
+
+                _completer.CheckAutocompletes();
             }
         }
 
