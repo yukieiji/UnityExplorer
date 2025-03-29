@@ -10,7 +10,7 @@ namespace UnityExplorer.CSConsole;
 
 public static class ConsoleController
 {
-    public static ScriptEvaluator Evaluator { get; private set; }
+    public static ConsoleScriptEvaluator Evaluator { get; } = new ConsoleScriptEvaluator();
     public static LexerBuilder Lexer { get; private set; }
     public static CSAutoCompleter Completer { get; private set; }
 
@@ -28,8 +28,6 @@ public static class ConsoleController
     public static string ScriptsFolder => Path.Combine(ExplorerCore.ExplorerFolder, "Scripts");
 
     static HashSet<string> usingDirectives;
-    static StringBuilder evaluatorOutput;
-    static StringWriter evaluatorStringWriter;
     static float timeOfLastCtrlR;
 
     static bool settingCaretCoroutine;
@@ -115,12 +113,6 @@ public static class ConsoleController
 
     #region Evaluating
 
-    static void GenerateTextWriter()
-    {
-        evaluatorOutput = new StringBuilder();
-        evaluatorStringWriter = new StringWriter(evaluatorOutput);
-    }
-
     public static void ResetConsole() => ResetConsole(true);
 
     public static void ResetConsole(bool logSuccess = true)
@@ -128,14 +120,7 @@ public static class ConsoleController
         if (SRENotSupported)
             return;
 
-        if (Evaluator != null)
-            Evaluator.Dispose();
-
-        GenerateTextWriter();
-        Evaluator = new ScriptEvaluator(evaluatorStringWriter)
-        {
-            InteractiveBaseClass = typeof(ScriptInteraction)
-        };
+        Evaluator.Recreate();
 
         usingDirectives = new HashSet<string>();
         foreach (string use in DefaultUsing)
@@ -167,11 +152,7 @@ public static class ConsoleController
         if (SRENotSupported)
             return;
 
-        if (evaluatorStringWriter == null || evaluatorOutput == null)
-        {
-            GenerateTextWriter();
-            Evaluator._textWriter = evaluatorStringWriter;
-        }
+        Evaluator.Initialize();
 
         try
         {
@@ -204,7 +185,8 @@ public static class ConsoleController
                 string[] outputSplit = output.Split('\n');
                 if (outputSplit.Length >= 2)
                     output = outputSplit[outputSplit.Length - 2];
-                evaluatorOutput.Clear();
+
+                Evaluator.ClearOutput();
 
                 if (ScriptEvaluator._reportPrinter.ErrorsCount > 0)
                     throw new FormatException($"Unable to compile the code. Evaluator's last output was:\r\n{output}");

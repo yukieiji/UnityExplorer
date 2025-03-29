@@ -7,15 +7,9 @@ namespace UnityExplorer.CSConsole;
 
 #nullable enable
 
-public sealed class ScriptEvaluatorHandler
-{
-    private ScriptEvaluator? _evaluator;
-
-}
-
 public sealed class ScriptEvaluator : Evaluator, IDisposable
 {
-    internal TextWriter _textWriter { private get; set; }
+    internal TextWriter TextWriter { private get; set; }
     internal static StreamReportPrinter? _reportPrinter;
 
     private static readonly HashSet<string> StdLib = new(StringComparer.InvariantCultureIgnoreCase)
@@ -28,19 +22,19 @@ public sealed class ScriptEvaluator : Evaluator, IDisposable
 
     public ScriptEvaluator(TextWriter tw) : base(BuildContext(tw))
     {
-        _textWriter = tw;
+        TextWriter = tw;
 
         ImportAppdomainAssemblies();
         AppDomain.CurrentDomain.AssemblyLoad += OnAssemblyLoad;
     }
 
     public override string? ToString()
-        => _textWriter.ToString();
+        => TextWriter.ToString();
 
     public void Dispose()
     {
         AppDomain.CurrentDomain.AssemblyLoad -= OnAssemblyLoad;
-        _textWriter.Dispose();
+        TextWriter.Dispose();
     }
 
     private void OnAssemblyLoad(object? _, AssemblyLoadEventArgs args)
