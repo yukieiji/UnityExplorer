@@ -18,9 +18,14 @@
   - Il2CPP and Mono support for BepInEx 6.x be.647+([DL:Il2CPP](https://github.com/yukieiji/UnityExplorer/releases/latest/download/UnityExplorer.BepInEx.Unity.IL2CPP.CoreCLR.zip)/[DL:Mono](https://github.com/yukieiji/UnityExplorer/releases/latest/download/UnityExplorer.BepInEx6.Unity.Mono.zip))
   - Compatible with MelonLoader 0.6.x(OpenBeta) or later([DL](https://github.com/yukieiji/UnityExplorer/releases/latest/download/UnityExplorer.MelonLoader.IL2CPP.CoreCLR.zip))
   - and etc..
--  Stabilize overall performance by adjusting project settings, etc.
+- Some new featuree
+- Stabilize overall performance by adjusting project settings, etc.
 
 If there are any bugs or features you want, please create a [ticket](https://github.com/yukieiji/UnityExplorer/issues/new/choose)!
+
+### Comparison with other forks
+- New features while keeping high compatibility
+- stability
 
 # Releases  [![](https://img.shields.io/github/downloads/sinai-dev/UnityExplorer/total.svg)](../../releases)
 
@@ -90,6 +95,7 @@ To adjust the settings, open the config file:
 Try adjusting the following settings and see if it fixes your issues:
 * `Startup_Delay_Time` - increase to 5-10 seconds (or more as needed), can fix issues with UnityExplorer being destroyed or corrupted during startup.
 * `Disable_EventSystem_Override` - if input is not working properly, try setting this to `true`.
+* `Disable_Setup_Force_ReLoad_ManagedAssemblies` - if Mono game fails to resolve assembly dependencies at startup, try setting this to `true`(detail : yukieiji/UniverseLib#4).
 
 If these fixes do not work, please create an issue in this repo and I'll do my best to look into it.
 

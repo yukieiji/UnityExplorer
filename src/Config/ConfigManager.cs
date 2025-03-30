@@ -16,6 +16,7 @@ namespace UnityExplorer.Config
         public static ConfigElement<bool> Hide_On_Startup;
         public static ConfigElement<float> Startup_Delay_Time;
         public static ConfigElement<bool> Disable_EventSystem_Override;
+        public static ConfigElement<bool> Disable_Setup_Force_ReLoad_ManagedAssemblies;
         public static ConfigElement<int> Target_Display;
         public static ConfigElement<bool> Force_Unlock_Mouse;
         public static ConfigElement<KeyCode> Force_Unlock_Toggle;
@@ -111,6 +112,10 @@ namespace UnityExplorer.Config
                 "If enabled, UnityExplorer will not override the EventSystem from the game.\n<b>May require restart to take effect.</b>",
                 false);
             Disable_EventSystem_Override.OnValueChanged += (bool value) => UniverseLib.Config.ConfigManager.Disable_EventSystem_Override = value;
+
+            Disable_Setup_Force_ReLoad_ManagedAssemblies = new("Disable Force reload ManagedAssemblies",
+                "If enabled, UnityExplorer will not reload ManagedAssemblies on setup(Currently only Mono is supported).\n<b>May require restart to take effect.</b>",
+                false);
 
             Default_Output_Path = new("Default Output Path",
                 "The default output path when exporting things from UnityExplorer.",
