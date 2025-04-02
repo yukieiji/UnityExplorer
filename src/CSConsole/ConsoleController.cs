@@ -82,6 +82,8 @@ public class ConsoleController
         _lexer = new LexerBuilder();
         _completer = new CSAutoCompleter();
 
+        SetupHelpInteraction();
+
         try
         {
             ResetConsole(false);
@@ -94,13 +96,11 @@ public class ConsoleController
             return;
         }
 
-        SetupHelpInteraction();
-
         _panel.OnInputChanged += OnInputChanged;
         _panel.InputScroller.OnScroll += OnInputScrolled;
         _panel.OnCompileClicked += Evaluate;
         _panel.OnResetClicked += ResetConsole;
-        _panel.OnHelpDropdownChanged += HelpSelected;
+        _panel.OnDropdownChanged += SelectedDropDown;
         _panel.OnAutoIndentToggled += OnToggleAutoIndent;
         _panel.OnCtrlRToggled += OnToggleCtrlRShortcut;
         _panel.OnSuggestionsToggled += OnToggleSuggestions;
@@ -117,9 +117,12 @@ public class ConsoleController
             string startupPath = Path.Combine(ScriptsFolder, "startup.cs");
             if (File.Exists(startupPath))
             {
-                ExplorerCore.Log($"Executing startup script from '{startupPath}'...");
-                string text = File.ReadAllText(startupPath);
-                Input.Text = text;
+                int index = codes.FindIndex(x => x.Label == "startup.cs");
+                if (index <= 0)
+                {
+                    throw new Exception("Can't loaded script");
+                }
+                SelectedDropDown(index);
                 Evaluate();
             }
         }
@@ -161,6 +164,8 @@ public class ConsoleController
             AddUsing(use);
         }
 
+        ReloadAndRefreshScript();
+
         if (logSuccess)
         {
             ExplorerCore.Log($"C# Console reset");//. Using directives:\r\n{Evaluator.GetUsing()}");
@@ -183,7 +188,9 @@ public class ConsoleController
             return;
         }
 
-        Evaluate(Input.Text);
+        string text = Input.Text;
+        Evaluate(text);
+        TryUpdateScript(text);
     }
 
     public void Evaluate(string input, bool supressLog = false)
@@ -195,59 +202,7 @@ public class ConsoleController
 
         try
         {
-            // Compile the code. If it returned a CompiledMethod, it is REPL.
-            CompiledMethod? repl = _evaluator.Compile(input);
-
-            if (repl != null)
-            {
-                // Valid REPL, we have a delegate to the evaluation.
-                try
-                {
-                    object? ret = null;
-                    repl.Invoke(ref ret);
-                    string? result = ret?.ToString();
-                    if (!string.IsNullOrEmpty(result))
-                    {
-                        ExplorerCore.Log($"Invoked REPL, result: {ret}");
-                    }
-                    else
-                    {
-                        ExplorerCore.Log($"Invoked REPL (no return value)");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    ExplorerCore.LogWarning($"Exception invoking REPL: {ex}");
-                }
-            }
-            else
-            {
-                // The compiled code was not REPL, so it was a using directive or it defined classes.
-
-                string? output = _evaluator.ToString();
-                if (output == null ||
-                    string.IsNullOrEmpty(output))
-                {
-                    return;
-                }
-
-                string[] outputSplit = output.Split('\n');
-                if (outputSplit.Length >= 2)
-                {
-                    output = outputSplit[outputSplit.Length - 2];
-                }
-
-                _evaluator.ClearOutput();
-
-                if (ScriptEvaluator._reportPrinter?.ErrorsCount > 0)
-                {
-                    throw new FormatException($"Unable to compile the code. Evaluator's last output was:\r\n{output}");
-                }
-                else if (!supressLog)
-                {
-                    ExplorerCore.Log($"Code compiled without errors.");
-                }
-            }
+            Compile(input, supressLog);
         }
         catch (FormatException fex)
         {
@@ -262,6 +217,107 @@ public class ConsoleController
             {
                 ExplorerCore.LogWarning(ex);
             }
+        }
+    }
+
+    private void Compile(string input, bool supressLog = false)
+    {
+        // Compile the code. If it returned a CompiledMethod, it is REPL.
+        CompiledMethod? repl = _evaluator.Compile(input);
+
+        if (repl != null)
+        {
+            REPLInvoke(repl);
+        }
+        else
+        {
+            CsCompile(supressLog);
+        }
+    }
+
+    private void REPLInvoke(CompiledMethod repl)
+    {
+        // Valid REPL, we have a delegate to the evaluation.
+        try
+        {
+            object? ret = null;
+            repl.Invoke(ref ret);
+            string? result = ret?.ToString();
+            if (!string.IsNullOrEmpty(result))
+            {
+                ExplorerCore.Log($"Invoked REPL, result: {ret}");
+            }
+            else
+            {
+                ExplorerCore.Log($"Invoked REPL (no return value)");
+            }
+        }
+        catch (Exception ex)
+        {
+            ExplorerCore.LogWarning($"Exception invoking REPL: {ex}");
+        }
+    }
+
+    private void CsCompile(bool supressLog = false)
+    {
+        // The compiled code was not REPL, so it was a using directive or it defined classes.
+
+        string? output = _evaluator.ToString();
+        if (output == null ||
+            string.IsNullOrEmpty(output))
+        {
+            return;
+        }
+
+        string[] outputSplit = output.Split('\n');
+        if (outputSplit.Length >= 2)
+        {
+            output = outputSplit[outputSplit.Length - 2];
+        }
+
+        _evaluator.ClearOutput();
+
+        if (ScriptEvaluator._reportPrinter?.ErrorsCount > 0)
+        {
+            throw new FormatException($"Unable to compile the code. Evaluator's last output was:\r\n{output}");
+        }
+        else if (!supressLog)
+        {
+            ExplorerCore.Log($"Code compiled without errors.");
+        }
+    }
+
+    private void TryUpdateScript(string newScript)
+    {
+        int selected = _panel.Dropdown.value;
+
+        if (selected <= 4 || codes.Count <= selected)
+        {
+            return;
+        }
+
+
+        ExplorerCore.Log($"Try Update exists code....");
+
+        var code = codes[selected];
+
+        string file = code.Label;
+        code.Code = newScript;
+
+        string path = Path.Combine(ScriptsFolder, file);
+        if (!File.Exists(path))
+        {
+            ExplorerCore.Log($"File not found!!");
+            return;
+        }
+        try
+        {
+            File.WriteAllText(path, newScript);
+            ExplorerCore.Log($"Success!! override");
+        }
+        catch
+        {
+            ExplorerCore.LogWarning("Can't override code");
         }
     }
 
@@ -311,7 +367,7 @@ public class ConsoleController
             && timeOfLastCtrlR.OccuredEarlierThanDefault())
         {
             timeOfLastCtrlR = Time.realtimeSinceStartup;
-            Evaluate(_panel.Input.Text);
+            Evaluate();
         }
     }
 
@@ -719,38 +775,90 @@ Doorstop example:
         }
     }
 
-    private static readonly Dictionary<string, string> helpDict = new();
-
-    public static void SetupHelpInteraction()
+    private class CodeInfo(string label, string code)
     {
-        Dropdown drop = _panel.HelpDropdown;
+        public string Label { get; } = label;
+        public string Code { get; set; } = code;
+    }
+    private readonly List<CodeInfo> codes = [
+        new CodeInfo("Welcome", STARTUP_TEXT),
+        new CodeInfo("Usings", HELP_USINGS),
+        new CodeInfo("REPL", HELP_REPL),
+        new CodeInfo("Classes", HELP_CLASSES),
+        new CodeInfo("Coroutines", HELP_COROUTINES)
+   ];
 
-        helpDict.Add("Help", "");
-        helpDict.Add("Usings", HELP_USINGS);
-        helpDict.Add("REPL", HELP_REPL);
-        helpDict.Add("Classes", HELP_CLASSES);
-        helpDict.Add("Coroutines", HELP_COROUTINES);
+    public void SetupHelpInteraction()
+    {
+        Dropdown drop = _panel.Dropdown;
 
-        foreach (KeyValuePair<string, string> opt in helpDict)
+        foreach (var c in codes)
         {
-            drop.options.Add(new Dropdown.OptionData(opt.Key));
+            drop.options.Add(new Dropdown.OptionData(c.Label));
         }
+
+        ReloadAndRefreshScript();
     }
 
-    public static void HelpSelected(int index)
+    public void SelectedDropDown(int index)
     {
-        if (index == 0)
+        if (codes.Count <= index)
         {
             return;
         }
 
-        KeyValuePair<string, string> helpText = helpDict.ElementAt(index);
-
-        Input.Text = helpText.Value;
-
-        _panel.HelpDropdown.value = 0;
+        Input.Text = codes[index].Code;
     }
 
+    public void ReloadAndRefreshScript()
+    {
+        if (!Directory.Exists(ScriptsFolder))
+        {
+            return;
+        }
+
+        string[] files = Directory.GetFiles(ScriptsFolder, "*.cs", SearchOption.AllDirectories);
+        if (files.Length == 0)
+        {
+            return;
+        }
+
+        ExplorerCore.Log($"Reloading all script...");
+
+        var help = _panel.Dropdown;
+
+        int prevSelect = help.value;
+        int size = help.options.Count;
+
+        if (size > 5)
+        {
+            help.options.RemoveRange(5, size - 5);
+        }
+        size = codes.Count;
+        if (size > 5)
+        {
+            codes.RemoveRange(5, size - 5);
+        }
+
+        foreach (string file in files)
+        {
+            try
+            {
+                ExplorerCore.Log($"loading... : {file}");
+                string label = Path.GetFileName(file); // ファイル名のみ表示
+                string code = File.ReadAllText(
+                    Path.Combine(ScriptsFolder, file));
+
+                codes.Add(new CodeInfo(label, code));
+                help.options.Add(new Dropdown.OptionData(label));
+            }
+            catch
+            {
+                ExplorerCore.LogWarning($"fail load : {file}");
+            }
+        }
+        SelectedDropDown(prevSelect);
+    }
 
     internal const string STARTUP_TEXT = @"<color=#5d8556>// Welcome to the UnityExplorer C# Console!
 
