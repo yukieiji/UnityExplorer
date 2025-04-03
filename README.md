@@ -148,7 +148,10 @@ The inspector is used to see detailed information on objects of any type and man
 
 * The C# Console uses the `Mono.CSharp.Evaluator` to define temporary classes or run immediate REPL code.
 * You can execute a script automatically on startup by naming it `startup.cs` and placing it in the `sinai-dev-UnityExplorer\Scripts\` folder (this folder will be created where you placed the DLL file).
-* See the "Help" dropdown in the C# console menu for more detailed information.
+  * Also you can load/save/compile `cs` files under `sinai-dev-UnityExplorer\Scripts\` folder
+    * load : Pressing `Refresh`(renamed Reset) button and selecting dropdown your file name.
+    * save : Pressing `Compile` button and automatically saves the file with the file name selected in the dropdown
+* See the "Welcome" dropdown in the C# console menu for more detailed information.
 
 ### Hook Manager
 
