@@ -87,7 +87,8 @@ public sealed class ScriptEvaluator : Evaluator, IDisposable
             StdLib = true,
             Target = Target.Library,
             WarningLevel = 0,
-            EnhancedWarnings = false
+            EnhancedWarnings = false,
+            Unsafe = true,
         };
 
         return new CompilerContext(settings, _reportPrinter);
