@@ -26,14 +26,13 @@ namespace UnityExplorer.CSConsole
 
         public LexerBuilder()
         {
-            lexers = new Lexer[]
-            {
+            lexers = [
                 commentLexer,
                 stringLexer,
                 new SymbolLexer(),
                 new NumberLexer(),
                 new KeywordLexer(),
-            };
+            ];
 
             foreach (Lexer matcher in lexers)
             {
