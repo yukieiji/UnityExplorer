@@ -83,7 +83,7 @@ namespace UnityExplorer.UI.Panels
             // Help dropdown
 
             GameObject helpDrop = UIFactory.CreateDropdown(toolsRow, "HelpDropdown", out Dropdown dropdown, "Help", 14, null);
-            UIFactory.SetLayoutElement(helpDrop, minHeight: 25, minWidth: 100);
+            UIFactory.SetLayoutElement(helpDrop, minHeight: 25, minWidth: 100, flexibleWidth: 9999);
             Dropdown = dropdown;
             Dropdown.onValueChanged.AddListener((int val) => { this.OnDropdownChanged?.Invoke(val); });
 

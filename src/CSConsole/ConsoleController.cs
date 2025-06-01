@@ -860,12 +860,12 @@ Doorstop example:
         SelectedDropDown(prevSelect);
     }
 
-    internal const string STARTUP_TEXT = @"<color=#5d8556>// Welcome to the UnityExplorer C# Console!
+    internal const string STARTUP_TEXT = @"// Welcome to the UnityExplorer C# Console!
 
 // It is recommended to use the Log panel (or a console log window) while using this tool.
 // Use the Help dropdown to see detailed examples of how to use the console.
 
-// To execute a script automatically on startup, put the script at 'sinai-dev-UnityExplorer\Scripts\startup.cs'</color>";
+// To execute a script automatically on startup, put the script at 'sinai-dev-UnityExplorer\Scripts\startup.cs'";
 
     internal const string HELP_USINGS = @"// You can add a using directive to any namespace, but you must compile for it to take effect.
 // It will remain in effect until you Reset the console.
