@@ -131,7 +131,7 @@ namespace UnityExplorer.UI.Widgets
             // generic args
             this.genericArgumentsHolder = UIFactory.CreateUIObject("GenericHolder", UIRoot);
             UIFactory.SetLayoutElement(genericArgumentsHolder, flexibleWidth: 1000);
-            Text genericsTitle = UIFactory.CreateLabel(genericArgumentsHolder, "GenericsTitle", "Generic Arguments", TextAnchor.MiddleLeft);
+            Text genericsTitle = UIFactory.CreateLabel(genericArgumentsHolder, "GenericsTitle", TranslationManager.Get("label_generic_arguments"), TextAnchor.MiddleLeft);
             UIFactory.SetLayoutElement(genericsTitle.gameObject, minHeight: 25, flexibleWidth: 1000);
             UIFactory.SetLayoutGroup<VerticalLayoutGroup>(genericArgumentsHolder, false, false, true, true, 3);
             UIFactory.SetLayoutElement(genericArgumentsHolder, minHeight: 25, flexibleHeight: 750, minWidth: 50, flexibleWidth: 9999);
@@ -140,14 +140,14 @@ namespace UnityExplorer.UI.Widgets
             // args
             this.parametersHolder = UIFactory.CreateUIObject("ArgHolder", UIRoot);
             UIFactory.SetLayoutElement(parametersHolder, flexibleWidth: 1000);
-            Text argsTitle = UIFactory.CreateLabel(parametersHolder, "ArgsTitle", "Arguments", TextAnchor.MiddleLeft);
+            Text argsTitle = UIFactory.CreateLabel(parametersHolder, "ArgsTitle", TranslationManager.Get("label_arguments"), TextAnchor.MiddleLeft);
             UIFactory.SetLayoutElement(argsTitle.gameObject, minHeight: 25, flexibleWidth: 1000);
             UIFactory.SetLayoutGroup<VerticalLayoutGroup>(parametersHolder, false, false, true, true, 3);
             UIFactory.SetLayoutElement(parametersHolder, minHeight: 25, flexibleHeight: 750, minWidth: 50, flexibleWidth: 9999);
             //argHolder.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
             // evaluate button
-            ButtonRef evalButton = UIFactory.CreateButton(UIRoot, "EvaluateButton", "Evaluate", new Color(0.2f, 0.2f, 0.2f));
+            ButtonRef evalButton = UIFactory.CreateButton(UIRoot, "EvaluateButton", TranslationManager.Get("button_evaluate"), new Color(0.2f, 0.2f, 0.2f));
             UIFactory.SetLayoutElement(evalButton.Component.gameObject, minHeight: 25, minWidth: 150, flexibleWidth: 0);
             evalButton.OnClick += () =>
             {

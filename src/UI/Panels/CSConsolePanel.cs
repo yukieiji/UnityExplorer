@@ -8,7 +8,7 @@ namespace UnityExplorer.UI.Panels
 {
     public class CSConsolePanel : UEPanel
     {
-        public override string Name => "C# Console";
+        public override string Name => TranslationManager.Get("panel_name_csharp_console");
         public override UIManager.Panels PanelType => UIManager.Panels.CSConsole;
 
         public override int MinWidth => 750;
@@ -41,7 +41,7 @@ namespace UnityExplorer.UI.Panels
         private void InvokeOnValueChanged(string value)
         {
             if (value.Length == UniversalUI.MAX_INPUTFIELD_CHARS)
-                ExplorerCore.LogWarning($"Reached maximum InputField character length! ({UniversalUI.MAX_INPUTFIELD_CHARS})");
+                ExplorerCore.LogWarning(string.Format(TranslationManager.Get("log_max_char_reached"), UniversalUI.MAX_INPUTFIELD_CHARS));
 
             OnInputChanged?.Invoke(value);
         }
@@ -70,19 +70,19 @@ namespace UnityExplorer.UI.Panels
 
             // Buttons
 
-            ButtonRef compileButton = UIFactory.CreateButton(toolsRow, "CompileButton", "Compile", new Color(0.33f, 0.5f, 0.33f));
+            ButtonRef compileButton = UIFactory.CreateButton(toolsRow, "CompileButton", TranslationManager.Get("button_compile"), new Color(0.33f, 0.5f, 0.33f));
             UIFactory.SetLayoutElement(compileButton.Component.gameObject, minHeight: 28, minWidth: 130, flexibleHeight: 0);
             compileButton.ButtonText.fontSize = 15;
             compileButton.OnClick += () => { OnCompileClicked?.Invoke(); };
 
-            ButtonRef resetButton = UIFactory.CreateButton(toolsRow, "ResetButton", "Reset", new Color(0.33f, 0.33f, 0.33f));
+            ButtonRef resetButton = UIFactory.CreateButton(toolsRow, "ResetButton", TranslationManager.Get("button_reset"), new Color(0.33f, 0.33f, 0.33f));
             UIFactory.SetLayoutElement(resetButton.Component.gameObject, minHeight: 28, minWidth: 80, flexibleHeight: 0);
             resetButton.ButtonText.fontSize = 15;
             resetButton.OnClick += () => { OnResetClicked?.Invoke(); };
 
             // Help dropdown
 
-            GameObject helpDrop = UIFactory.CreateDropdown(toolsRow, "HelpDropdown", out Dropdown dropdown, "Help", 14, null);
+            GameObject helpDrop = UIFactory.CreateDropdown(toolsRow, "HelpDropdown", out Dropdown dropdown, TranslationManager.Get("dropdown_help"), 14, null);
             UIFactory.SetLayoutElement(helpDrop, minHeight: 25, minWidth: 100);
             HelpDropdown = dropdown;
             HelpDropdown.onValueChanged.AddListener((int val) => { this.OnHelpDropdownChanged?.Invoke(val); });
@@ -92,7 +92,7 @@ namespace UnityExplorer.UI.Panels
             GameObject ctrlRToggleObj = UIFactory.CreateToggle(toolsRow, "CtrlRToggle", out Toggle CtrlRToggle, out Text ctrlRToggleText);
             UIFactory.SetLayoutElement(ctrlRToggleObj, minWidth: 150, flexibleWidth: 0, minHeight: 25);
             ctrlRToggleText.alignment = TextAnchor.UpperLeft;
-            ctrlRToggleText.text = "Compile on Ctrl+R";
+            ctrlRToggleText.text = TranslationManager.Get("toggle_compile_on_ctrl_r");
             CtrlRToggle.onValueChanged.AddListener((bool val) => { OnCtrlRToggled?.Invoke(val); });
 
             // Enable Suggestions toggle
@@ -100,7 +100,7 @@ namespace UnityExplorer.UI.Panels
             GameObject suggestToggleObj = UIFactory.CreateToggle(toolsRow, "SuggestionToggle", out Toggle SuggestionsToggle, out Text suggestToggleText);
             UIFactory.SetLayoutElement(suggestToggleObj, minWidth: 120, flexibleWidth: 0, minHeight: 25);
             suggestToggleText.alignment = TextAnchor.UpperLeft;
-            suggestToggleText.text = "Suggestions";
+            suggestToggleText.text = TranslationManager.Get("toggle_suggestions");
             SuggestionsToggle.onValueChanged.AddListener((bool val) => { OnSuggestionsToggled?.Invoke(val); });
 
             // Enable Auto-indent toggle
@@ -108,7 +108,7 @@ namespace UnityExplorer.UI.Panels
             GameObject autoIndentToggleObj = UIFactory.CreateToggle(toolsRow, "IndentToggle", out Toggle AutoIndentToggle, out Text autoIndentToggleText);
             UIFactory.SetLayoutElement(autoIndentToggleObj, minWidth: 120, flexibleWidth: 0, minHeight: 25);
             autoIndentToggleText.alignment = TextAnchor.UpperLeft;
-            autoIndentToggleText.text = "Auto-indent";
+            autoIndentToggleText.text = TranslationManager.Get("toggle_auto_indent");
             AutoIndentToggle.onValueChanged.AddListener((bool val) => { OnAutoIndentToggled?.Invoke(val); });
 
             // Console Input

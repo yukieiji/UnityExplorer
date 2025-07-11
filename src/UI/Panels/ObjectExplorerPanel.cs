@@ -6,7 +6,7 @@ namespace UnityExplorer.UI.Panels
 {
     public class ObjectExplorerPanel : UEPanel
     {
-        public override string Name => "Object Explorer";
+        public override string Name => TranslationManager.Get("panel_name_object_explorer");
         public override UIManager.Panels PanelType => UIManager.Panels.ObjectExplorer;
 
         public override int MinWidth => 350;
@@ -99,8 +99,8 @@ namespace UnityExplorer.UI.Panels
             tabPages.Add(ObjectSearch);
 
             // set up tabs
-            AddTabButton(tabGroup, "Scene Explorer");
-            AddTabButton(tabGroup, "Object Search");
+            AddTabButton(tabGroup, TranslationManager.Get("tab_scene_explorer"));
+            AddTabButton(tabGroup, TranslationManager.Get("tab_object_search"));
 
             // default active state: Active
             this.SetActive(true);

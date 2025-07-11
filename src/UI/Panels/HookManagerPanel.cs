@@ -21,7 +21,7 @@ namespace UnityExplorer.UI.Panels
 
         // Panel
         public override UIManager.Panels PanelType => UIManager.Panels.HookManager;
-        public override string Name => "Hooks";
+        public override string Name => TranslationManager.Get("panel_name_hooks");
         public override bool ShowByDefault => false;
         public override int MinWidth => 400;
         public override int MinHeight => 400;

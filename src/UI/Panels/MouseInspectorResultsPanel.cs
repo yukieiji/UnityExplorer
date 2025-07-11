@@ -9,7 +9,7 @@ namespace UnityExplorer.UI.Panels
     {
         public override UIManager.Panels PanelType => UIManager.Panels.UIInspectorResults;
 
-        public override string Name => "UI Inspector Results";
+        public override string Name => TranslationManager.Get("panel_name_ui_inspector_results");
 
         public override int MinWidth => 500;
         public override int MinHeight => 500;
@@ -52,7 +52,7 @@ namespace UnityExplorer.UI.Panels
                 return;
 
             GameObject obj = UiInspector.LastHitObjects[index];
-            cell.Button.ButtonText.text = $"<color=cyan>{obj.name}</color> ({obj.transform.GetTransformPath(true)})";
+            cell.Button.ButtonText.text = string.Format(TranslationManager.Get("text_format_ui_inspector_result"), obj.name, obj.transform.GetTransformPath(true));
         }
 
         public override void SetDefaultSizeAndPosition()
