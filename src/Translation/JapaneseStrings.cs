@@ -45,7 +45,7 @@ public static class JapaneseStrings
         { "cannot_inspect", "nullまたは削除されたオブジェクトをインスペクトできません！" },
         { "cannot_assign", "'{0}'を'{1}'に割り当てることはできません！" },
         { "current_paste", "現在の貼り付け：" },
-        { "clear_clipboard", "クリップボードをクリア" },
+        { "clear_clipboard", "クリア" },
         { "not_set", "未設定" },
         { "inspect", "インスペクト" },
         { "autocompleter", "自動補完" },
@@ -82,7 +82,7 @@ public static class JapaneseStrings
         { "panel_name_hooks", "フック" },
 
         // InspectorPanel.cs
-        { "panel_name_inspector", "インスペクター" },
+        { "panel_name_inspector", "マウスインスペクター" },
         { "dropdown_mouse_inspect", "マウスインスペクター" },
         { "dropdown_option_world", "ワールド" },
         { "dropdown_option_ui", "UI" },
@@ -92,7 +92,7 @@ public static class JapaneseStrings
         { "panel_name_log", "ログ" },
         { "button_clear", "クリア" },
         { "button_open_log_file", "ログファイルを開く" },
-        { "toggle_log_unity_debug", "Unityデバッグをログに記録しますか？" },
+        { "toggle_log_unity_debug", "Unityのデバッグログの記録" },
 
         // MouseInspectorResultsPanel.cs
         { "panel_name_ui_inspector_results", "結果" },
