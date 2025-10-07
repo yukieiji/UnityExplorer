@@ -242,7 +242,7 @@ compress-archive .\$Path\* $Path/../UnityExplorer.Standalone.IL2CPP.CoreCLR.zip
 # ----------- Editor (mono) -----------
 $Path1 = "Release/UnityExplorer.Standalone.Mono"
 $Path2 = "UnityEditorPackage/Runtime"
-Copy-Item $Path1/UnityExplorer.STANDALONE.Mono.dll -Destination $Path2
+Copy-Item $Path1/UnityExplorer.Standalone.Mono.dll -Destination $Path2
 Copy-Item $Path1/UniverseLib.Mono.dll -Destination $Path2
 Remove-Item Release/UnityExplorer.Editor.zip -ErrorAction SilentlyContinue
 compress-archive .\UnityEditorPackage\*  Release/UnityExplorer.Editor.zip
