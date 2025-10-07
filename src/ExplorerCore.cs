@@ -1,4 +1,4 @@
-﻿global using System;
+global using System;
 global using System.Collections.Generic;
 global using System.IO;
 global using System.Linq;
@@ -21,7 +21,7 @@ namespace UnityExplorer;
 public static class ExplorerCore
 {
     public const string NAME = "UnityExplorer";
-    public const string VERSION = "4.12.7";
+    public const string VERSION = "4.12.8";
     public const string AUTHOR = "Sinai, yukieiji";
     public const string GUID = "com.sinai.unityexplorer";
 
