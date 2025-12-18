@@ -11,6 +11,7 @@ Global
 		Release_BIE_Cpp|Any CPU = Release_BIE_Cpp|Any CPU
 		Release_BIE_Unity_Cpp|Any CPU = Release_BIE_Unity_Cpp|Any CPU
 		Release_BIE5_Mono|Any CPU = Release_BIE5_Mono|Any CPU
+		Release_BIE5_Mono21|Any CPU = Release_BIE5_Mono21|Any CPU
 		Release_BIE6_Mono|Any CPU = Release_BIE6_Mono|Any CPU
 		Release_BIE6_Unity_Mono|Any CPU = Release_BIE6_Unity_Mono|Any CPU
 		Release_ML_Cpp_CoreCLR|Any CPU = Release_ML_Cpp_CoreCLR|Any CPU
@@ -30,6 +31,8 @@ Global
 		{B21DBDE3-5D6F-4726-93AB-CC3CC68BAE7D}.Release_BIE_Unity_Cpp|Any CPU.Build.0 = BIE_Unity_Cpp_CoreCLR|Any CPU
 		{B21DBDE3-5D6F-4726-93AB-CC3CC68BAE7D}.Release_BIE5_Mono|Any CPU.ActiveCfg = BIE5_Mono|Any CPU
 		{B21DBDE3-5D6F-4726-93AB-CC3CC68BAE7D}.Release_BIE5_Mono|Any CPU.Build.0 = BIE5_Mono|Any CPU
+		{B21DBDE3-5D6F-4726-93AB-CC3CC68BAE7D}.Release_BIE5_Mono21|Any CPU.ActiveCfg = BIE5_Mono21|Any CPU
+		{B21DBDE3-5D6F-4726-93AB-CC3CC68BAE7D}.Release_BIE5_Mono21|Any CPU.Build.0 = BIE5_Mono21|Any CPU
 		{B21DBDE3-5D6F-4726-93AB-CC3CC68BAE7D}.Release_BIE6_Mono|Any CPU.ActiveCfg = BIE6_Mono|Any CPU
 		{B21DBDE3-5D6F-4726-93AB-CC3CC68BAE7D}.Release_BIE6_Mono|Any CPU.Build.0 = BIE6_Mono|Any CPU
 		{B21DBDE3-5D6F-4726-93AB-CC3CC68BAE7D}.Release_BIE6_Unity_Mono|Any CPU.ActiveCfg = BIE6_Unity_Mono|Any CPU
