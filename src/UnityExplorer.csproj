@@ -14,7 +14,7 @@
     <!-- MSBuildの.NET8対応に伴って勝手にバージョンにハッシュ値入れられてBepInExのロード不具合が出たため、明示的に無効化しておく -->
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <Optimize>true</Optimize>
-    <Configurations>BIE_Cpp;BIE_Cpp_CoreCLR;BIE_Unity_Cpp_CoreCLR;BIE5_Mono;BIE6_Mono;BIE6_Unity_Mono;ML_Cpp_net6;ML_Cpp_CoreCLR;ML_Cpp_net472;ML_Mono;STANDALONE_Mono;STANDALONE_Cpp;STANDALONE_Cpp_CoreCLR</Configurations>
+    <Configurations>BIE_Cpp;BIE_Cpp_CoreCLR;BIE_Unity_Cpp_CoreCLR;BIE5_Mono;BIE5_Mono21;BIE6_Mono;BIE6_Unity_Mono;ML_Cpp_net6;ML_Cpp_CoreCLR;ML_Cpp_net472;ML_Mono;STANDALONE_Mono;STANDALONE_Cpp;STANDALONE_Cpp_CoreCLR</Configurations>
   </PropertyGroup>
 
 
@@ -108,6 +108,13 @@
     <DefineConstants>MONO,BIE,BIE5</DefineConstants>
     <AssemblyName>UnityExplorer.BIE5.Mono</AssemblyName>
   </PropertyGroup>
+  <!-- BEPINEX 5 MONO 2.1-->
+  <PropertyGroup Condition="'$(Configuration)'=='BIE5_Mono21'">
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <OutputPath>..\Release\UnityExplorer.BepInEx5.Mono21\</OutputPath>
+    <DefineConstants>MONO,BIE,BIE5</DefineConstants>
+    <AssemblyName>UnityExplorer.BIE5.Mono21</AssemblyName>
+  </PropertyGroup>
   <!-- STANDALONE Mono -->
   <PropertyGroup Condition="'$(Configuration)'=='STANDALONE_Mono'">
     <TargetFramework>net35</TargetFramework>
@@ -172,7 +179,7 @@
   </ItemGroup>
 
   <!-- mono nuget -->
-  <ItemGroup Condition="'$(Configuration)'=='BIE6_Mono' or '$(Configuration)'=='BIE6_Unity_Mono' or '$(Configuration)'=='BIE5_Mono' or '$(Configuration)'=='ML_Mono' or '$(Configuration)'=='STANDALONE_Mono'">
+  <ItemGroup Condition="'$(Configuration)'=='BIE6_Mono' or '$(Configuration)'=='BIE6_Unity_Mono' or '$(Configuration)'=='BIE5_Mono' or '$(Configuration)'=='ML_Mono' or '$(Configuration)'=='STANDALONE_Mono' or '$(Configuration)'=='BIE5_Mono21'">
     <Reference Include="UniverseLib">
       <HintPath>..\UniverseLib\Release\UniverseLib.Mono\UniverseLib.Mono.dll</HintPath>
       <Private>True</Private>
@@ -188,7 +195,7 @@
     </Reference>
   </ItemGroup>
   <!-- net35 / net472 -->
-  <ItemGroup Condition="'$(TargetFramework)'=='net35' or '$(TargetFramework)'=='net472'">
+  <ItemGroup Condition="'$(TargetFramework)'=='net35' or '$(TargetFramework)'=='net472' or '$(TargetFramework)'=='netstandard2.1'">
     <Reference Include="mcs">
       <HintPath>..\lib\net35\mcs.dll</HintPath>
       <Private>True</Private>
@@ -209,13 +216,13 @@
     </Reference>
   </ItemGroup>
   <!-- BepInEx 5 Mono -->
-  <ItemGroup Condition="'$(Configuration)'=='BIE5_Mono'">
+  <ItemGroup Condition="'$(Configuration)'=='BIE5_Mono' or '$(Configuration)'=='BIE5_Mono21'">
     <Reference Include="BepInEx">
       <HintPath>..\lib\net35\BepInEx\BepInEx.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
-  <!-- BepInEx 6 Mono -->
+	<!-- BepInEx 6 Mono -->
   <ItemGroup Condition="'$(Configuration)'=='BIE6_Mono'">
     <Reference Include="BepInEx">
       <HintPath>..\lib\net35\BepInEx\build423~577\BepInEx.Core.dll</HintPath>
@@ -269,7 +276,37 @@
       <Private>False</Private>
     </Reference>
   </ItemGroup>
-  <!-- Il2Cpp Unhollower -->
+	<ItemGroup Condition="'$(Configuration)'=='BIE5_Mono21'">
+		<Reference Include="UnityEngine">
+			<HintPath>..\lib\netstandard21\UnityEngine.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="UnityEngine.CoreModule">
+			<HintPath>..\lib\netstandard21\UnityEngine.CoreModule.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="UnityEngine.UI">
+			<HintPath>..\lib\netstandard21\UnityEngine.UI.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="UnityEngine.UIModule">
+			<HintPath>..\lib\netstandard21\UnityEngine.UIModule.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="UnityEngine.AudioModule">
+			<HintPath>..\lib\netstandard21\UnityEngine.AudioModule.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="UnityEngine.TextRenderingModule">
+			<HintPath>..\lib\netstandard21\UnityEngine.TextRenderingModule.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="UnityEngine.PhysicsModule">
+			<HintPath>..\lib\netstandard21\UnityEngine.PhysicsModule.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+	</ItemGroup>
+	<!-- Il2Cpp Unhollower -->
   <ItemGroup Condition="'$(Configuration)'=='ML_Cpp_net6' or '$(Configuration)'=='ML_Cpp_net472' or '$(Configuration)'=='STANDALONE_Cpp' or '$(Configuration)'=='BIE_Cpp'">
     <Reference Include="Il2Cppmscorlib">
       <HintPath>..\lib\unhollowed\Il2Cppmscorlib.dll</HintPath>
