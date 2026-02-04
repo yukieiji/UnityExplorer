@@ -17,6 +17,7 @@ namespace UnityExplorer.Config
         public static ConfigElement<float> Startup_Delay_Time;
         public static ConfigElement<bool> Disable_EventSystem_Override;
         public static ConfigElement<bool> Disable_Setup_Force_ReLoad_ManagedAssemblies;
+        public static ConfigElement<bool> Bypass_UniverseLib_ICall;
         public static ConfigElement<int> Target_Display;
         public static ConfigElement<bool> Force_Unlock_Mouse;
         public static ConfigElement<KeyCode> Force_Unlock_Toggle;
@@ -115,6 +116,10 @@ namespace UnityExplorer.Config
 
             Disable_Setup_Force_ReLoad_ManagedAssemblies = new("Disable Force reload ManagedAssemblies",
                 "If enabled, UnityExplorer will not reload ManagedAssemblies on setup(Currently only Mono is supported).\n<b>May require restart to take effect.</b>",
+                false);
+
+            Bypass_UniverseLib_ICall = new("Bypass UniverseLib ICall",
+                "If enabled, UnityExplorer will bypass UniverseLib's ICall Reflection system. This may help with compatibility in some games.\n<b>May require restart to take effect.</b>",
                 false);
 
             Default_Output_Path = new("Default Output Path",
