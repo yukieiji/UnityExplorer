@@ -96,6 +96,7 @@ Try adjusting the following settings and see if it fixes your issues:
 * `Startup_Delay_Time` - increase to 5-10 seconds (or more as needed), can fix issues with UnityExplorer being destroyed or corrupted during startup.
 * `Disable_EventSystem_Override` - if input is not working properly, try setting this to `true`.
 * `Disable_Setup_Force_ReLoad_ManagedAssemblies` - if Mono game fails to resolve assembly dependencies at startup, try setting this to `true`(detail : yukieiji/UniverseLib#4).
+* `Bypass_UniverseLib_ICall` - If you have errors when inspecting Sprites or similar objects in some games, try setting this to `true`.
 
 If these fixes do not work, please create an issue in this repo and I'll do my best to look into it.
 
