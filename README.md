@@ -27,7 +27,7 @@ If there are any bugs or features you want, please create a [ticket](https://git
 - New features while keeping high compatibility
 - stability
 
-# Releases  [![](https://img.shields.io/github/downloads/sinai-dev/UnityExplorer/total.svg)](../../releases)
+# Releases  [![](https://img.shields.io/github/downloads/yukieiji/UnityExplorer/total.svg)](../../releases)
 
 [![](https://img.shields.io/github/release/yukieiji/UnityExplorer.svg?label=version)](../../releases/latest) [![](https://img.shields.io/github/workflow/status/yukieiji/UnityExplorer/Build%20UnityExplorer)](https://github.com/yukieiji/UnityExplorer/actions) [![](https://img.shields.io/github/downloads/yukieiji/UnityExplorer/latest/total.svg)](../../releases/latest)
 
