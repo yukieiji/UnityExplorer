@@ -11,9 +11,11 @@ namespace UnityExplorer.ObjectExplorer
             internal set
             {
                 if (selectedScene.HasValue && selectedScene == value)
+                {
                     return;
+                }
                 selectedScene = value;
-                OnInspectedSceneChanged?.Invoke((Scene)selectedScene);
+                OnInspectedSceneChanged?.Invoke(selectedScene.Value);
             }
         }
         private static Scene? selectedScene;
@@ -46,23 +48,39 @@ namespace UnityExplorer.ObjectExplorer
         /// <summary>Whether or not the "DontDestroyOnLoad" scene exists in this game.</summary>
         public static bool DontDestroyExists { get; private set; }
 
+        private const string dontDestroyName = "DontDestroyOnLoad";
+
         internal static void Init()
         {
             // Check if the game has "DontDestroyOnLoad"
-            DontDestroyExists = Scene.GetNameInternal(-12) == "DontDestroyOnLoad";
+            try
+            {
+                DontDestroyExists = Scene.GetNameInternal(-12) == dontDestroyName;
+            }
+            catch (Exception ex)
+            {
+                ExplorerCore.LogWarning($"Unable to check for existence of DontDestroyOnLoad scene via Scene.GetNameInternal: {ex}");
+#pragma warning disable CS0618 // 型またはメンバーが旧型式です
+                ExplorerCore.LogWarning("Falling back to checking loaded scenes for DontDestroyOnLoad via SceneManager.GetAllScenes(). This uses a deprecated API.");
+                // 非推奨APIだけど、6年近くたってもまだ使われてるので仕方なく使う
+                DontDestroyExists = SceneManager.GetAllScenes().Any(s => s.name == dontDestroyName);
+#pragma warning restore CS0618 // 型またはメンバーが旧型式です
+            }
 
             // Try to get all scenes in the build settings. This may not work.
             try
             {
                 Type sceneUtil = ReflectionUtility.GetTypeByName("UnityEngine.SceneManagement.SceneUtility");
                 if (sceneUtil == null)
+                {
                     throw new Exception("This version of Unity does not ship with the 'SceneUtility' class, or it was not unstripped.");
+                }
 
-                System.Reflection.MethodInfo method = sceneUtil.GetMethod("GetScenePathByBuildIndex", ReflectionUtility.FLAGS);
+                MethodInfo method = sceneUtil.GetMethod("GetScenePathByBuildIndex", ReflectionUtility.FLAGS);
                 int sceneCount = SceneManager.sceneCountInBuildSettings;
                 for (int i = 0; i < sceneCount; i++)
                 {
-                    string scenePath = (string)method.Invoke(null, new object[] { i });
+                    string scenePath = (string)method.Invoke(null, [ i ]);
                     AllSceneNames.Add(scenePath);
                 }
 
@@ -89,29 +107,39 @@ namespace UnityExplorer.ObjectExplorer
             {
                 Scene scene = SceneManager.GetSceneAt(i);
                 if (scene == default || !scene.isLoaded || !scene.IsValid())
+                {
                     continue;
+                }
 
                 // If we have not yet confirmed inspectedExists, check if this scene is our currently inspected one.
                 if (!inspectedExists && scene == SelectedScene)
+                {
                     inspectedExists = true;
+                }
 
                 LoadedScenes.Add(scene);
             }
 
             if (DontDestroyExists)
+            {
                 LoadedScenes.Add(new Scene { m_Handle = -12 });
+            }
             LoadedScenes.Add(new Scene { m_Handle = -1 });
 
             // Default to first scene if none selected or previous selection no longer exists.
             if (!inspectedExists)
+            {
                 SelectedScene = LoadedScenes.First();
+            }
 
             // Notify on the list changing at all
             OnLoadedScenesUpdated?.Invoke(LoadedScenes);
 
             // Finally, update the root objects list.
-            if (SelectedScene != null && ((Scene)SelectedScene).IsValid())
-                CurrentRootObjects = RuntimeHelper.GetRootGameObjects((Scene)SelectedScene);
+            if (SelectedScene.HasValue && SelectedScene.Value.IsValid())
+            {
+                CurrentRootObjects = RuntimeHelper.GetRootGameObjects(SelectedScene.Value);
+            }
             else
             {
                 UnityEngine.Object[] allObjects = RuntimeHelper.FindObjectsOfTypeAll(typeof(GameObject));
@@ -120,7 +148,9 @@ namespace UnityExplorer.ObjectExplorer
                 {
                     GameObject go = obj.TryCast<GameObject>();
                     if (go.transform.parent == null && !go.scene.IsValid())
+                    {
                         objects.Add(go);
+                    }
                 }
                 CurrentRootObjects = objects;
             }
