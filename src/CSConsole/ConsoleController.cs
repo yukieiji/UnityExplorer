@@ -19,19 +19,8 @@ public class ConsoleController
 
     private bool sreNotSupported { get; set; }
     private int lastCaretPosition { get;  set; }
-
-    public static float DefaultInputFieldAlpha
-    {
-        set
-        {
-            if (_instance is null)
-            {
-                return;
-            }
-            _instance.defaultInputFieldAlpha = value;
-        }
-    }
-    private float defaultInputFieldAlpha;
+    // Fix: Assignment to DefaultInputFieldAlpha failed due to instance not being created before Init
+    public static float DefaultInputFieldAlpha { get; set; }
 
     private bool enableCtrlRShortcut { get; set; } = true;
     private bool enableAutoIndent { get; set; } = true;
@@ -518,7 +507,7 @@ public class ConsoleController
         Input.Component.selectionFocusPosition = caretPosition;
         lastCaretPosition = Input.Component.caretPosition;
 
-        color.a = defaultInputFieldAlpha;
+        color.a = DefaultInputFieldAlpha;
         Input.Component.selectionColor = color;
 
         Input.Component.readOnly = false;
