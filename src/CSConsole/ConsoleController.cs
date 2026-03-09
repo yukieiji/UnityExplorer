@@ -20,7 +20,7 @@ public class ConsoleController
     private bool sreNotSupported { get; set; }
     private int lastCaretPosition { get;  set; }
     // Fix: Assignment to DefaultInputFieldAlpha failed due to instance not being created before Init
-    public static float DefaultInputFieldAlpha = 0f;
+    public static float DefaultInputFieldAlpha { get; set; }
 
     private bool enableCtrlRShortcut { get; set; } = true;
     private bool enableAutoIndent { get; set; } = true;
