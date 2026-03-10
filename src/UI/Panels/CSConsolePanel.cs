@@ -11,7 +11,7 @@ namespace UnityExplorer.UI.Panels
         public override string Name => "C# Console";
         public override UIManager.Panels PanelType => UIManager.Panels.CSConsole;
 
-        public override int MinWidth => 750;
+        public override int MinWidth => 870;
         public override int MinHeight => 300;
         public override Vector2 DefaultAnchorMin => new(0.4f, 0.175f);
         public override Vector2 DefaultAnchorMax => new(0.85f, 0.925f);
@@ -32,6 +32,7 @@ namespace UnityExplorer.UI.Panels
         public Action<bool> OnCtrlRToggled;
         public Action<bool> OnSuggestionsToggled;
         public Action<bool> OnAutoIndentToggled;
+        public Action<bool> OnAutoInvokeMianToggled;
         public Action OnPanelResized;
 
         public CSConsolePanel(UIBase owner) : base(owner)
@@ -110,6 +111,14 @@ namespace UnityExplorer.UI.Panels
             autoIndentToggleText.alignment = TextAnchor.UpperLeft;
             autoIndentToggleText.text = "Auto-indent";
             AutoIndentToggle.onValueChanged.AddListener((bool val) => { OnAutoIndentToggled?.Invoke(val); });
+
+            // Enable Auto-InvokeMain toggle
+
+            GameObject autoInvokeMainToggleObj = UIFactory.CreateToggle(toolsRow, "InvokeMainTogggle", out Toggle AutoInvokeMainToggle, out Text autoInvokeMainToggleText);
+            UIFactory.SetLayoutElement(autoInvokeMainToggleObj, minWidth: 120, flexibleWidth: 0, minHeight: 25);
+            autoInvokeMainToggleText.alignment = TextAnchor.UpperLeft;
+            autoInvokeMainToggleText.text = "InvokeMain";
+            AutoInvokeMainToggle.onValueChanged.AddListener((bool val) => { OnAutoInvokeMianToggled?.Invoke(val); });
 
             // Console Input
 

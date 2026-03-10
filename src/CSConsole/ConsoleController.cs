@@ -25,6 +25,7 @@ public class ConsoleController
     private bool enableCtrlRShortcut { get; set; } = true;
     private bool enableAutoIndent { get; set; } = true;
     private bool enableSuggestions { get; set; } = true;
+    private bool autoInvokeMain { get; set; } = true;
 
     private float timeOfLastCtrlR;
 
@@ -93,8 +94,9 @@ public class ConsoleController
         _panel.OnAutoIndentToggled += OnToggleAutoIndent;
         _panel.OnCtrlRToggled += OnToggleCtrlRShortcut;
         _panel.OnSuggestionsToggled += OnToggleSuggestions;
+        _panel.OnAutoInvokeMianToggled += OnToggleAutoInvokeMian;
         _panel.OnPanelResized += OnInputScrolled;
-
+        
         // Run startup script
         try
         {
@@ -252,9 +254,24 @@ public class ConsoleController
         // The compiled code was not REPL, so it was a using directive or it defined classes.
 
         string? output = _evaluator.ToString();
-        if (output == null ||
-            string.IsNullOrEmpty(output))
+        if (output == null || string.IsNullOrEmpty(output))
         {
+            string log = $"Code compiled without errors.";
+            if (autoInvokeMain)
+            {
+                if(_evaluator.InvokeLastMain(out string error))
+                {
+                    log = $"Code compiled and invoek Mian method without errors.";
+                }
+                else if(!string.IsNullOrEmpty(error))
+                {
+                    log = $"Code compiled without errors, Invoke methode error: {error}";
+                }
+            }
+            if (!supressLog)
+            {
+                ExplorerCore.Log(log);
+            }
             return;
         }
 
@@ -423,6 +440,11 @@ public class ConsoleController
     private void OnToggleSuggestions(bool value)
     {
         enableSuggestions = value;
+    }
+
+    private  void OnToggleAutoInvokeMian(bool value)
+    {
+        autoInvokeMain = value;
     }
 
     #endregion
