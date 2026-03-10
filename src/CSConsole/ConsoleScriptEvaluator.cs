@@ -92,6 +92,7 @@ public sealed class ConsoleScriptEvaluator
             catch (Exception e)
             {
                 error = e.ToString();
+                return false;
             }
         }
         // error = "Can't find Main method to invoke.";
