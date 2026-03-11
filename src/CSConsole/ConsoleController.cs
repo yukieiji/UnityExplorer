@@ -48,6 +48,7 @@ public class ConsoleController
         "System.Reflection",
         "UnityEngine",
         "UniverseLib",
+        "static UnityExplorer.CSConsole.ScriptInteraction",
 #if CPP
 #if INTEROP
         "Il2CppInterop.Runtime",

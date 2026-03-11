@@ -1,5 +1,5 @@
 ﻿using Mono.CSharp;
-
+using System.Collections;
 #nullable enable
 
 namespace UnityExplorer.CSConsole;
@@ -73,21 +73,27 @@ public sealed class ConsoleScriptEvaluator
                              .FirstOrDefault(m => m.Name == "Main");
             if (method is null) continue;
 
-            var parameters = method.GetParameters();
+            var parameters = method.GetParameters(); 
             try
             {
-                if (parameters.Length == 0)
+                if (method.ReturnType == typeof(void) || method.ReturnType == typeof(int))
                 {
-                    // static void Main() or static int Main()
-                    method.Invoke(null, null);
+                    if (parameters.Length == 0)
+                    {
+                        method.Invoke(null, null);
+                        return true;
+                    }
+                    else if (parameters.Length == 1 && parameters[0].ParameterType == typeof(string[]))
+                    {
+                        method.Invoke(null, new object[] { new string[0] });
+                        return true;
+                    }
+                }else if(method.ReturnType == typeof(IEnumerator))
+                {
+                    RuntimeHelper.StartCoroutine((IEnumerator)method.Invoke(null, null));
                     return true;
                 }
-                else if (parameters.Length == 1 && parameters[0].ParameterType == typeof(string[]))
-                {
-                    // static void Main(string[] args) or static int Main(string[] args)
-                    method.Invoke(null, new object[] { new string[0] });
-                    return true;
-                }
+                
             }
             catch (Exception e)
             {
