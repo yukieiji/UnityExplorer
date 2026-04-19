@@ -1,4 +1,5 @@
-﻿using UnityExplorer.UI.Panels;
+﻿using UnityExplorer.ObjectExplorer;
+using UnityExplorer.UI.Panels;
 using UniverseLib.UI;
 using UniverseLib.UI.Models;
 
@@ -90,9 +91,9 @@ namespace UnityExplorer.UI.Widgets
                 IsStaticToggle.Set(Target.isStatic, false);
             }
 
-            if (force || Target.scene.handle != lastSceneHandle)
+            if (force || SceneHandler.GetSceneHandleInt(Target.scene) != lastSceneHandle)
             {
-                lastSceneHandle = Target.scene.handle;
+                lastSceneHandle = SceneHandler.GetSceneHandleInt(Target.scene);
                 SceneButton.ButtonText.text = Target.scene.IsValid() ? Target.scene.name : "None (Asset/Resource)";
             }
 
