@@ -31,6 +31,8 @@ namespace UnityExplorer.UI.Panels
         public override bool ShowByDefault => true;
 
         public int ItemCount => Logs.Count;
+        
+        internal static bool DiskLoggingAvailable = true;
 
         private static ScrollPool<ConsoleLogCell> logScrollPool;
 
@@ -59,22 +61,91 @@ namespace UnityExplorer.UI.Panels
         {
             string fileName = $"UnityExplorer {DateTime.Now:u}.txt";
             fileName = IOUtility.EnsureValidFilename(fileName);
-            string path = Path.Combine(ExplorerCore.ExplorerFolder, "Logs");
-            CurrentStreamPath = IOUtility.EnsureValidFilePath(Path.Combine(path, fileName));
 
-            // clean old log(s)
-            string[] files = Directory.GetFiles(path);
-            if (files.Length >= 10)
+            CurrentStreamPath = ResolveLogFilePath(fileName);
+
+            if (CurrentStreamPath == null)
             {
-                List<string> sorted = files.ToList();
-                // sort by 'datetime.ToString("u")' will put the oldest ones first
-                sorted.Sort();
-                for (int i = 0; i < files.Length - 9; i++)
-                    File.Delete(files[i]);
+                DiskLoggingAvailable = false;
+                ExplorerCore.LogWarning("No writable folder for the UnityExplorer log file was found, logging to disk is disabled.");
+                return;
             }
 
-            if (ConfigManager.Log_To_Disk.Value)
-                File.WriteAllLines(CurrentStreamPath, Logs.Select(it => it.message).ToArray());
+            try
+            {
+                // clean old log(s)
+                string path = Path.GetDirectoryName(CurrentStreamPath);
+                string[] files = Directory.GetFiles(path);
+                if (files.Length >= 10)
+                {
+                    List<string> sorted = files.ToList();
+                    // sort by 'datetime.ToString("u")' will put the oldest ones first
+                    sorted.Sort();
+                    for (int i = 0; i < files.Length - 9; i++)
+                        File.Delete(files[i]);
+                }
+
+                if (ConfigManager.Log_To_Disk.Value)
+                    File.WriteAllLines(CurrentStreamPath, Logs.Select(it => it.message).ToArray());
+            }
+            catch (Exception ex)
+            {
+                DiskLoggingAvailable = false;
+                ExplorerCore.LogWarning($"Failed to create the UnityExplorer log file at '{CurrentStreamPath}': {ex.Message}");
+            }
+        }
+
+        private static string ResolveLogFilePath(string fileName)
+        {
+            List<string> candidates = new()
+            {
+                Path.Combine(ExplorerCore.ExplorerFolder, "Logs"),
+                GetPersistentDataLogFolder(),
+            };
+
+            foreach (string candidate in candidates)
+            {
+                if (string.IsNullOrEmpty(candidate) || !EnsureFolderWritable(candidate))
+                    continue;
+
+                return Path.Combine(candidate, fileName);
+            }
+
+            return null;
+        }
+
+        private static string GetPersistentDataLogFolder()
+        {
+            try
+            {
+                string dataPath = UnityEngine.Application.persistentDataPath;
+                if (string.IsNullOrEmpty(dataPath))
+                    return null;
+
+                return Path.Combine(dataPath, "UnityExplorer", "Logs");
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private static bool EnsureFolderWritable(string folder)
+        {
+            try
+            {
+                Directory.CreateDirectory(folder);
+
+                string probe = Path.Combine(folder, ".write_test");
+                File.WriteAllText(probe, "probe");
+                File.Delete(probe);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                ExplorerCore.LogWarning($"Log folder '{folder}' is not writable: {ex.Message}");
+                return false;
+            }
         }
 
         // Logging
@@ -83,8 +154,20 @@ namespace UnityExplorer.UI.Panels
         {
             Logs.Add(new LogInfo(message, type));
 
-            if (CurrentStreamPath != null && ConfigManager.Log_To_Disk.Value)
-                File.AppendAllText(CurrentStreamPath, '\n' + message);
+            if (DiskLoggingAvailable && CurrentStreamPath != null && ConfigManager.Log_To_Disk.Value)
+            {
+                try
+                {
+                    File.AppendAllText(CurrentStreamPath, '\n' + message);
+                }
+                catch (Exception ex)
+                {
+                    // Never let a failed write escape
+                    // an exception here aborts the whole UI update every frame.
+                    DiskLoggingAvailable = false;
+                    ExplorerCore.LogWarning($"Disabled logging to '{CurrentStreamPath}' after a write failure: {ex.Message}");
+                }
+            }
 
             if (logScrollPool != null)
                 logScrollPool.Refresh(true, false);
@@ -98,8 +181,15 @@ namespace UnityExplorer.UI.Panels
 
         private static void OpenLogFile()
         {
-            if (File.Exists(CurrentStreamPath))
-                Process.Start(CurrentStreamPath);
+            try
+            {
+                if (CurrentStreamPath != null && File.Exists(CurrentStreamPath))
+                    Process.Start(CurrentStreamPath);
+            }
+            catch (Exception ex)
+            {
+                ExplorerCore.LogWarning($"Could not open the log file: {ex.Message}");
+            }
         }
 
         // Cell pool

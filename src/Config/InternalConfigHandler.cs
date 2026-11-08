@@ -70,7 +70,14 @@ namespace UnityExplorer.Config
             foreach (KeyValuePair<string, IConfigElement> entry in ConfigManager.InternalConfigs)
                 tomlDocument.Put(entry.Key, entry.Value.BoxedValue as string, false);
 
-            File.WriteAllText(CONFIG_PATH, tomlDocument.SerializedValue);
+            try
+            {
+                File.WriteAllText(CONFIG_PATH, tomlDocument.SerializedValue);
+            }
+            catch (Exception ex)
+            {
+                ExplorerCore.LogWarning($"Could not save UnityExplorer internal data to '{CONFIG_PATH}': {ex.Message}");
+            }
         }
     }
 }
