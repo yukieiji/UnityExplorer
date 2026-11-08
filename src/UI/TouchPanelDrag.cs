@@ -10,13 +10,11 @@ namespace UnityExplorer.UI
     internal static class TouchPanelDrag
     {
         internal static bool IsDragging => draggingPanel != null;
-
-        private const string CLOSE_BUTTON_HOLDER = "CloseHolder";
         
         private const int PHASE_BEGAN = 0;
         private const int PHASE_ENDED = 3;
         private const int PHASE_CANCELED = 4;
-        
+
         private static bool setupDone;
         private static bool setupFailed;
         private static PropertyInfo pTouchCount;
@@ -203,7 +201,7 @@ namespace UnityExplorer.UI
             pos.y = Mathf.Clamp(pos.y, -halfH + KEEP_VISIBLE, halfH);
             rect.localPosition = pos;
         }
-        
+
         private static void ClearSimulatedMouseDrag()
         {
             foreach (UEPanel panel in UIManager.UIPanels.Values)
@@ -234,8 +232,7 @@ namespace UnityExplorer.UI
                     continue;
 
                 // Don't start a drag from the close button, that would also close the panel.
-                Transform closeHolder = titleBar.transform.Find(CLOSE_BUTTON_HOLDER);
-                if (closeHolder is RectTransform closeRect && ContainsScreenPoint(closeRect, screenPos))
+                if (IsOverTitleBarButton(titleBar.transform, screenPos))
                     continue;
 
                 int index = panel.UIRoot.transform.GetSiblingIndex();
@@ -247,6 +244,20 @@ namespace UnityExplorer.UI
             }
 
             return best;
+        }
+        
+        private static bool IsOverTitleBarButton(Transform titleBar, Vector2 screenPos)
+        {
+            foreach (Button button in titleBar.GetComponentsInChildren<Button>(true))
+            {
+                if (button == null)
+                    continue;
+
+                if (ContainsScreenPoint(button.transform as RectTransform, screenPos))
+                    return true;
+            }
+
+            return false;
         }
 
         private static bool ContainsScreenPoint(RectTransform rect, Vector2 screenPos)
