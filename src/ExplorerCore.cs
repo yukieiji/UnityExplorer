@@ -79,7 +79,10 @@ public static class ExplorerCore
 
     internal static void Update()
     {
+        // The legacy input method didn't support modern game.
         ExplorerKeybind.Update();
+        // Tbh this is a method call with a high overhead.
+        TouchPanelDrag.Update();
     }
 
 
