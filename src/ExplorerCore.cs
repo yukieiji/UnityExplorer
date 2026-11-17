@@ -66,6 +66,13 @@ public static class ExplorerCore
     // Default delay is 1 second which is usually enough.
     static void LateInit()
     {
+#if CPP
+        // Apply the C# console's member-import patch exactly once, before the console imports
+        // any type. It must not live in ScriptEvaluator's constructor: the evaluator is
+        // recreated every time the console is reset, and this is IL2CPP-only.
+        UnityExplorer.CSConsole.McsMemberImportFix.Apply();
+#endif
+
         SceneHandler.Init();
 
         Log($"Creating UI...");
