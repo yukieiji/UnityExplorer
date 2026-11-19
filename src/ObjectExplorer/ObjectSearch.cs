@@ -10,7 +10,7 @@ namespace UnityExplorer.ObjectExplorer
     public class ObjectSearch : UIModel
     {
         public ObjectExplorerPanel Parent { get; }
-
+        
         public ObjectSearch(ObjectExplorerPanel parent)
         {
             Parent = parent;

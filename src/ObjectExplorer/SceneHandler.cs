@@ -1,4 +1,5 @@
 ﻿using UnityEngine.SceneManagement;
+using UniverseLib;
 
 #nullable enable
 
@@ -67,7 +68,12 @@ public static class SceneHandler
                 throw new Exception("This version of Unity does not ship with the 'Scene' class, or it was not unstripped.");
             }
             MethodInfo? method = sceneType.GetMethod("GetNameInternal", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
-            string? sceneName = (string?)method?.Invoke(null, [-12]);
+            // Newer Unity 6 builds take a SceneHandle struct instead of an int.
+            if (method == null || method.GetParameters().FirstOrDefault()?.ParameterType != typeof(int))
+            {
+                throw new Exception("Scene.GetNameInternal is missing or does not take an int handle in this Unity version.");
+            }
+            string? sceneName = (string?)method.Invoke(null, [-12]);
             if (string.IsNullOrEmpty(sceneName))
             {
                 throw new Exception("Scene.GetNameInternal returned null for DontDestroyOnLoad scene.");
@@ -80,7 +86,16 @@ public static class SceneHandler
 #pragma warning disable CS0618 // 型またはメンバーが旧型式です
             ExplorerCore.LogWarning("Falling back to checking loaded scenes for DontDestroyOnLoad via SceneManager.GetAllScenes(). This uses a deprecated API.");
             // 非推奨APIだけど、6年近くたってもまだ使われてるので仕方なく使う
-            DontDestroyExists = SceneManager.GetAllScenes().Any(s => s.name == dontDestroyName);
+            try
+            {
+                DontDestroyExists = SceneManager.GetAllScenes().Any(s => s.name == dontDestroyName);
+            }
+            catch (Exception ex2)
+            {
+                // GetAllScenes can be stripped. Every Unity since 5.3 has a DontDestroyOnLoad scene.
+                DontDestroyExists = true;
+                ExplorerCore.LogWarning($"SceneManager.GetAllScenes() unavailable ({ex2.Message}); assuming DontDestroyOnLoad scene exists.");
+            }
 #pragma warning restore CS0618 // 型またはメンバーが旧型式です
         }
 
