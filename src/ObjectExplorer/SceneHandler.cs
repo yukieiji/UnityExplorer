@@ -47,7 +47,7 @@ public static class SceneHandler
     internal static int DefaultSceneCount => 1 + (DontDestroyExists ? 1 : 0);
 
     /// <summary>Whether or not we are currently inspecting the "HideAndDontSave" asset scene.</summary>
-    public static bool InspectingAssetScene => SelectedScene.HasValue && SelectedScene.Value.handle == -1;
+    public static bool InspectingAssetScene => SelectedScene.HasValue && GetHandle(SelectedScene.Value) == AssetSceneHandle;
 
     /// <summary>Whether or not we successfuly retrieved the names of the scenes in the build settings.</summary>
     public static bool WasAbleToGetScenesInBuild { get; private set; }
@@ -56,6 +56,130 @@ public static class SceneHandler
     public static bool DontDestroyExists { get; private set; }
 
     private const string dontDestroyName = "DontDestroyOnLoad";
+
+    internal const int DontDestroyHandle = -12;
+    internal const int AssetSceneHandle = -1;
+
+    // ---------------------------------------------------------------------
+    // Scene handle compatibility layer.
+    //
+    // Before Unity 6000.3, Scene.handle / Scene.m_Handle is an int.
+    // From 6000.3 it is a SceneHandle struct { EntityId m_Value { int m_Data } }.
+    // Compiled code that touches .handle / .m_Handle directly breaks on one of
+    // the two layouts, so everything goes through reflection here instead.
+    // ---------------------------------------------------------------------
+
+    private const BindingFlags InstFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+
+    private static readonly PropertyInfo? handleProp = typeof(Scene).GetProperty("handle", InstFlags);
+    private static readonly FieldInfo? handleField =
+        typeof(Scene).GetField("m_Handle", InstFlags)
+        ?? typeof(Scene).GetFields(InstFlags).FirstOrDefault();
+
+    private static Scene? cachedDontDestroyScene;
+    private static Scene? cachedAssetScene;
+    private static bool loggedUpdateError;
+
+    /// <summary>Gets the scene's handle as an int, regardless of the Unity version's handle layout.</summary>
+    internal static int GetHandle(Scene scene)
+    {
+        try
+        {
+            object? raw = handleProp != null
+                ? handleProp.GetValue(scene)
+                : handleField?.GetValue(scene);
+
+            if (TryUnwrapInt(raw, out int value))
+            {
+                return value;
+            }
+        }
+        catch
+        {
+            // ignored, fall through
+        }
+        return int.MinValue; // "unknown", never equals a sentinel
+    }
+
+    private static bool TryUnwrapInt(object? o, out int value, int depth = 0)
+    {
+        value = 0;
+        switch (o)
+        {
+            case null: return false;
+            case int i: value = i; return true;
+            case uint ui: value = unchecked((int)ui); return true;
+            case long l: value = unchecked((int)l); return true;
+            case ulong ul: value = unchecked((int)ul); return true;
+        }
+
+        Type type = o.GetType();
+        if (depth > 4 || !type.IsValueType || type.IsPrimitive || type.IsEnum)
+        {
+            return false;
+        }
+
+        foreach (FieldInfo field in type.GetFields(InstFlags))
+        {
+            if (TryUnwrapInt(field.GetValue(o), out value, depth + 1))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /// <summary>Returns a copy of a (boxed) value type with its first integer leaf set to <paramref name="value"/>.</summary>
+    private static object? WithInt(Type type, object? existing, int value, int depth = 0)
+    {
+        if (type == typeof(int)) return value;
+        if (type == typeof(uint)) return unchecked((uint)value);
+        if (type == typeof(long)) return (long)value;
+        if (type == typeof(ulong)) return unchecked((ulong)(long)value);
+
+        if (depth > 4 || !type.IsValueType || type.IsPrimitive || type.IsEnum)
+        {
+            return null;
+        }
+
+        object boxed = existing ?? Activator.CreateInstance(type)!;
+        foreach (FieldInfo field in type.GetFields(InstFlags))
+        {
+            object? inner = WithInt(field.FieldType, field.GetValue(boxed), value, depth + 1);
+            if (inner != null)
+            {
+                field.SetValue(boxed, inner);
+                return boxed;
+            }
+        }
+        return null;
+    }
+
+    /// <summary>Builds a Scene struct carrying a sentinel handle (-12 for DontDestroyOnLoad, -1 for the asset scene).</summary>
+    internal static Scene MakeScene(int handle)
+    {
+        try
+        {
+            if (handleField != null)
+            {
+                object boxed = new Scene();
+                object? newValue = WithInt(handleField.FieldType, handleField.GetValue(boxed), handle);
+                if (newValue != null)
+                {
+                    handleField.SetValue(boxed, newValue);
+                    return (Scene)boxed;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            ExplorerCore.LogWarning($"Unable to create sentinel Scene with handle {handle}: {ex.Message}");
+        }
+        return default;
+    }
+
+    private static Scene DontDestroyScene => cachedDontDestroyScene ??= MakeScene(DontDestroyHandle);
+    private static Scene AssetScene => cachedAssetScene ??= MakeScene(AssetSceneHandle);
 
     internal static void Init()
     {
@@ -68,12 +192,20 @@ public static class SceneHandler
                 throw new Exception("This version of Unity does not ship with the 'Scene' class, or it was not unstripped.");
             }
             MethodInfo? method = sceneType.GetMethod("GetNameInternal", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
-            // Newer Unity 6 builds take a SceneHandle struct instead of an int.
-            if (method == null || method.GetParameters().FirstOrDefault()?.ParameterType != typeof(int))
+            ParameterInfo? param = method?.GetParameters().FirstOrDefault();
+            if (method == null || param == null)
             {
-                throw new Exception("Scene.GetNameInternal is missing or does not take an int handle in this Unity version.");
+                throw new Exception("Scene.GetNameInternal is missing in this Unity version.");
             }
-            string? sceneName = (string?)method.Invoke(null, [-12]);
+
+            // int on older Unity, SceneHandle struct on Unity 6000.3+.
+            object? arg = WithInt(param.ParameterType, null, DontDestroyHandle);
+            if (arg == null)
+            {
+                throw new Exception($"Scene.GetNameInternal takes an unsupported parameter type: {param.ParameterType}");
+            }
+
+            string? sceneName = (string?)method.Invoke(null, [arg]);
             if (string.IsNullOrEmpty(sceneName))
             {
                 throw new Exception("Scene.GetNameInternal returned null for DontDestroyOnLoad scene.");
@@ -112,7 +244,7 @@ public static class SceneHandler
             int sceneCount = SceneManager.sceneCountInBuildSettings;
             for (int i = 0; i < sceneCount; i++)
             {
-                string? scenePath = (string?)method?.Invoke(null, [ i ]);
+                string? scenePath = (string?)method?.Invoke(null, [i]);
                 if (string.IsNullOrEmpty(scenePath))
                 {
                     continue;
@@ -131,11 +263,53 @@ public static class SceneHandler
 
     internal static void Update()
     {
+        // A failure here must never take the whole UI down with it.
+        try
+        {
+            UpdateInternal();
+        }
+        catch (Exception ex)
+        {
+            if (!loggedUpdateError)
+            {
+                loggedUpdateError = true;
+                ExplorerCore.LogWarning($"SceneHandler.Update failed (further errors suppressed): {ex}");
+            }
+        }
+    }
+
+    private static bool providerRootsBroken;
+
+    /// <summary>
+    /// UniverseLib's RuntimeHelper.GetRootGameObjects reads Scene.handle as an int, which throws
+    /// MissingMethodException on Unity 6000.3+. Fall back to Scene.GetRootGameObjects() directly,
+    /// which is unaffected by the handle change.
+    /// </summary>
+    private static IEnumerable<GameObject> GetRootObjects(Scene scene)
+    {
+        if (!providerRootsBroken)
+        {
+            try
+            {
+                return RuntimeHelper.GetRootGameObjects(scene);
+            }
+            catch (MissingMethodException ex)
+            {
+                providerRootsBroken = true;
+                ExplorerCore.LogWarning($"RuntimeHelper.GetRootGameObjects failed, using Scene.GetRootGameObjects() instead: {ex}");
+            }
+        }
+        return scene.GetRootGameObjects();
+    }
+
+    private static void UpdateInternal()
+    {
         // Inspected scene will exist if it's DontDestroyOnLoad or HideAndDontSave
+        int selectedHandle = SelectedScene.HasValue ? GetHandle(SelectedScene.Value) : int.MinValue;
         bool inspectedExists =
             SelectedScene.HasValue
-            && ((DontDestroyExists && SelectedScene.Value.handle == -12)
-                || SelectedScene.Value.handle == -1);
+            && ((DontDestroyExists && selectedHandle == DontDestroyHandle)
+                || selectedHandle == AssetSceneHandle);
 
         LoadedScenes.Clear();
 
@@ -158,9 +332,9 @@ public static class SceneHandler
 
         if (DontDestroyExists)
         {
-            LoadedScenes.Add(new Scene { m_Handle = -12 });
+            LoadedScenes.Add(DontDestroyScene);
         }
-        LoadedScenes.Add(new Scene { m_Handle = -1 });
+        LoadedScenes.Add(AssetScene);
 
         // Default to first scene if none selected or previous selection no longer exists.
         if (!inspectedExists)
@@ -174,7 +348,7 @@ public static class SceneHandler
         // Finally, update the root objects list.
         if (SelectedScene.HasValue && SelectedScene.Value.IsValid())
         {
-            CurrentRootObjects = RuntimeHelper.GetRootGameObjects(SelectedScene.Value);
+            CurrentRootObjects = GetRootObjects(SelectedScene.Value);
         }
         else
         {
@@ -185,7 +359,7 @@ public static class SceneHandler
                 GameObject? go = obj.TryCast<GameObject>();
                 if (go != null &&
                     go.transform != null &&
-                    go.transform.parent == null && 
+                    go.transform.parent == null &&
                     !go.scene.IsValid())
                 {
                     objects.Add(go);

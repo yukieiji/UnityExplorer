@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.1.32328.378
+# Visual Studio Version 18
+VisualStudioVersion = 18.10.12306.391 oobstable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityExplorer", "UnityExplorer.csproj", "{B21DBDE3-5D6F-4726-93AB-CC3CC68BAE7D}"
 EndProject
@@ -22,8 +22,8 @@ Global
 		Release_STANDALONE_Mono|Any CPU = Release_STANDALONE_Mono|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B21DBDE3-5D6F-4726-93AB-CC3CC68BAE7D}.Release_BIE_CoreCLR|Any CPU.ActiveCfg = BIE_Cpp_CoreCLR|Any CPU
-		{B21DBDE3-5D6F-4726-93AB-CC3CC68BAE7D}.Release_BIE_CoreCLR|Any CPU.Build.0 = BIE_Cpp_CoreCLR|Any CPU
+		{B21DBDE3-5D6F-4726-93AB-CC3CC68BAE7D}.Release_BIE_CoreCLR|Any CPU.ActiveCfg = BIE_Unity_Cpp_CoreCLR|Any CPU
+		{B21DBDE3-5D6F-4726-93AB-CC3CC68BAE7D}.Release_BIE_CoreCLR|Any CPU.Build.0 = BIE_Unity_Cpp_CoreCLR|Any CPU
 		{B21DBDE3-5D6F-4726-93AB-CC3CC68BAE7D}.Release_BIE_Cpp|Any CPU.ActiveCfg = BIE_Cpp|Any CPU
 		{B21DBDE3-5D6F-4726-93AB-CC3CC68BAE7D}.Release_BIE_Cpp|Any CPU.Build.0 = BIE_Cpp|Any CPU
 		{B21DBDE3-5D6F-4726-93AB-CC3CC68BAE7D}.Release_BIE_Unity_Cpp|Any CPU.ActiveCfg = BIE_Unity_Cpp_CoreCLR|Any CPU
