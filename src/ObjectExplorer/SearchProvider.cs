@@ -31,7 +31,7 @@ public static class SearchProvider
         return filter switch
         {
             SceneFilter.Any => true,
-            SceneFilter.DontDestroyOnLoad => scene.handle == -12,
+            SceneFilter.DontDestroyOnLoad => SceneHandler.GetHandle(scene) == SceneHandler.DontDestroyHandle,
             SceneFilter.HideAndDontSave => scene == default,
             SceneFilter.ActivelyLoaded => scene.buildIndex != -1,
             _ => false,

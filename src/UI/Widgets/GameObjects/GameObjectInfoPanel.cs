@@ -90,9 +90,10 @@ namespace UnityExplorer.UI.Widgets
                 IsStaticToggle.Set(Target.isStatic, false);
             }
 
-            if (force || Target.scene.handle != lastSceneHandle)
+            int sceneHandle = UnityExplorer.ObjectExplorer.SceneHandler.GetHandle(Target.scene);
+            if (force || sceneHandle != lastSceneHandle)
             {
-                lastSceneHandle = Target.scene.handle;
+                lastSceneHandle = sceneHandle;
                 SceneButton.ButtonText.text = Target.scene.IsValid() ? Target.scene.name : "None (Asset/Resource)";
             }
 
@@ -421,7 +422,17 @@ namespace UnityExplorer.UI.Widgets
             layerToNames = new List<string>();
             for (int i = 0; i < 32; i++)
             {
-                string name = RuntimeHelper.LayerToName(i);
+                string name = null;
+                try
+                {
+                    name = RuntimeHelper.LayerToName(i);
+                }
+                catch
+                {
+                    // The LayerToName iCall can't be resolved on some Unity versions (eg. Unity 6).
+                    try { name = LayerMask.LayerToName(i); }
+                    catch { /* fall back to the layer number */ }
+                }
                 if (string.IsNullOrEmpty(name))
                     name = i.ToString();
                 layerToNames.Add(name);
